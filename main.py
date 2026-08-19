@@ -11,7 +11,7 @@ from datetime import datetime
 from functools import wraps
 
 import httpx
-from flask import Flask, request, jsonify, send_from_directory, Response, stream_with_context
+from flask import Flask, request, jsonify, send_file, Response, stream_with_context
 
 from database import get_db, init_db, add_log, add_dify_call
 
@@ -64,7 +64,7 @@ def get_config_dict(db):
 def serve_frontend():
     html_path = os.path.join(FRONTEND_DIR, "index.html")
     if os.path.exists(html_path):
-        return send_from_directory(FRONTEND_DIR, "index.html")
+        return send_file(html_path)
     return jsonify({"message": "前端页面未部署。请将 HTML 文件放入 static/ 目录。"})
 
 
@@ -72,7 +72,7 @@ def serve_frontend():
 def serve_admin():
     html_path = os.path.join(FRONTEND_DIR, "admin.html")
     if os.path.exists(html_path):
-        return send_from_directory(FRONTEND_DIR, "admin.html")
+        return send_file(html_path)
     return jsonify({"message": "后台管理页面未部署。请将 admin.html 放入 static/ 目录。"})
 
 
