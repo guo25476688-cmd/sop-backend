@@ -1,0 +1,2283 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="AI 活动 SOP 智能运营平台——从活动策划到复盘沉淀的完整闭环。" />
+<title>AI 活动 SOP 智能运营平台</title>
+<style>
+/* ==========================================================================
+   设计令牌
+   ========================================================================== */
+:root{
+  --ink:#161d2b; --ink2:#2b3648; --muted:#69748a; --subtle:#93a0b4;
+  --line:#e7ebf2; --line2:#eef1f6; --bg:#f5f7fb; --paper:#fff;
+  --blue:#1668f0; --blue-d:#0f57d4; --blue-2:#3b86ff;
+  --blue-soft:#eaf2ff; --blue-line:#cfe0fb; --blue-ink:#1b5fcc;
+  --navy:#12305c;
+  --green:#12a05f; --green-soft:#e7f7ef; --green-ink:#0d7d4a; --green-line:#bfe9d4;
+  --amber:#d5860e; --amber-soft:#fef5e6; --amber-ink:#a5670c; --amber-line:#f3ddb4;
+  --red:#d94b4b; --red-soft:#fdeeee; --red-ink:#b03a3a; --red-line:#f6d4d4;
+  --purple:#7c5cf0; --orange:#f0872b;
+  --sh-1:0 1px 2px rgba(20,32,56,.04);
+  --sh-2:0 1px 3px rgba(20,32,56,.05),0 8px 22px rgba(23,40,74,.05);
+  --sh-3:0 18px 48px rgba(16,32,62,.16);
+  --r-s:8px; --r-m:10px; --r-l:14px; --r-xl:18px;
+  --top:66px; --side:258px; --ai:344px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Inter","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink); font-size:13px; line-height:1.65;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid rgba(22,104,240,.2);outline-offset:1px}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#d3dae5;border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:#bcc6d5}
+::-webkit-scrollbar-track{background:transparent}
+
+/* 顶栏 */
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--top);z-index:60;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);display:flex;align-items:center;
+  padding:0 22px;gap:16px}
+.brand{display:flex;align-items:center;gap:11px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:9px;flex:none;
+  background:linear-gradient(150deg,#1a6ef5,#0b52cf);color:#fff;
+  display:grid;place-items:center;font-weight:800;font-size:15px;
+  box-shadow:0 6px 16px rgba(22,104,240,.28)}
+.brand-copy b{display:block;font-size:14.5px;font-weight:750;letter-spacing:-.01em;line-height:1.35}
+.brand-copy span{display:block;font-size:11.5px;color:var(--subtle);line-height:1.35}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
+.icon-btn{width:33px;height:33px;border-radius:50%;background:#f2f5f9;color:#7d8798;
+  display:grid;place-items:center;font-size:13px;transition:.16s}
+.icon-btn:hover{background:#e8edf4;color:var(--ink2)}
+.avatar-btn{width:33px;height:33px;border-radius:9px;background:var(--blue-soft);
+  color:var(--blue-ink);display:grid;place-items:center;font-weight:750;font-size:12.5px}
+
+/* 按钮 */
+.btn{height:35px;padding:0 15px;border-radius:var(--r-m);border:1px solid var(--line);
+  background:#fff;color:var(--ink2);font-size:13px;font-weight:650;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  white-space:nowrap;transition:.16s}
+.btn:hover{border-color:#c9d5e6;background:#fbfcfe}
+.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff;
+  box-shadow:0 5px 14px rgba(22,104,240,.22)}
+.btn-primary:hover{background:var(--blue-d);border-color:var(--blue-d)}
+.btn-white{background:#fff;border-color:transparent;color:var(--navy);font-weight:700}
+.btn-white:hover{background:#f2f6fd}
+.btn-sm{height:30px;padding:0 11px;font-size:12px;border-radius:var(--r-s)}
+.btn-lg{height:42px;padding:0 20px;font-size:14px;border-radius:11px}
+.btn-block{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.btn-ghost:hover{background:#f2f5f9;border-color:transparent}
+.link{color:var(--blue);font-size:12.5px;font-weight:650;cursor:pointer}
+.link:hover{color:var(--blue-d)}
+
+/* 标签 / 徽章 */
+.pill{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;
+  border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap;
+  background:#f1f4f9;color:#66738a}
+.pill-blue{background:var(--blue-soft);color:var(--blue-ink)}
+.pill-green{background:var(--green-soft);color:var(--green-ink)}
+.pill-amber{background:var(--amber-soft);color:var(--amber-ink)}
+.pill-red{background:var(--red-soft);color:var(--red-ink)}
+.pill-purple{background:#f2eeff;color:#5b3fd0}
+.pill-dot:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;flex:none}
+.pill-lg{height:27px;padding:0 11px;font-size:12px}
+
+/* 卡片 */
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sh-1)}
+.card-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+  padding:16px 18px 0}
+.card-hd.bd{padding-bottom:14px;border-bottom:1px solid var(--line2)}
+.card-hd h3{margin:0;font-size:15px;font-weight:750;letter-spacing:-.01em}
+.card-hd p{margin:4px 0 0;font-size:12px;color:var(--muted)}
+.card-bd{padding:16px 18px}
+.card-ft{padding:13px 18px;border-top:1px solid var(--line2);display:flex;
+  align-items:center;justify-content:space-between;gap:12px}
+
+/* 外壳布局 */
+.shell{padding-top:var(--top);min-height:100vh}
+body.has-side .shell{padding-left:var(--side)}
+body.has-ai .shell{padding-right:var(--ai)}
+.main{padding:22px 26px 60px;max-width:1420px}
+.page{display:none}
+.page.on{display:block;animation:fade .22s ease}
+#wb{display:none}
+#wb.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* 侧栏 */
+.sidebar{position:fixed;top:var(--top);left:0;bottom:0;width:var(--side);z-index:40;
+  background:#fff;border-right:1px solid var(--line);display:none;
+  flex-direction:column;padding:15px 13px 12px;overflow:auto}
+body.has-side .sidebar{display:flex}
+.proj-pick{display:flex;align-items:center;gap:9px;border:1px solid var(--line);
+  border-radius:var(--r-m);padding:9px 10px;cursor:pointer;transition:.16s}
+.proj-pick:hover{border-color:var(--blue-line);background:#fafcff}
+.proj-pick .pm{width:29px;height:29px;border-radius:8px;background:var(--blue-soft);
+  color:var(--blue-ink);display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.proj-pick .pn{min-width:0;flex:1}
+.proj-pick .pn b{display:block;font-size:12.5px;font-weight:700;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+.proj-pick .pn span{display:block;font-size:11px;color:var(--subtle);line-height:1.35}
+.proj-pick i{font-style:normal;color:var(--subtle);font-size:11px}
+.side-lb{display:flex;align-items:center;justify-content:space-between;
+  padding:18px 4px 9px;font-size:11.5px;color:var(--subtle);font-weight:700}
+.stage-nav{display:grid;gap:2px}
+.stage-item{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:var(--r-m);
+  cursor:pointer;transition:.15s;border:1px solid transparent;text-align:left;width:100%}
+.stage-item:hover{background:#f6f9fd}
+.stage-item.on{background:#fff;border-color:var(--blue);box-shadow:0 0 0 3px rgba(22,104,240,.08)}
+.stage-item .sn{width:25px;height:25px;border-radius:50%;flex:none;display:grid;place-items:center;
+  font-size:11px;font-weight:750;background:#f0f3f8;color:#8994a8;border:1px solid #e4e9f1}
+.stage-item.on .sn{background:var(--blue);color:#fff;border-color:var(--blue)}
+.stage-item.done .sn{background:var(--green-soft);color:var(--green);border-color:var(--green-line)}
+.stage-item .st{min-width:0;flex:1}
+.stage-item .st small{display:block;font-size:10.5px;color:var(--subtle);line-height:1.35;
+  letter-spacing:.02em}
+.stage-item .st b{display:block;font-size:13px;font-weight:700;line-height:1.4}
+.stage-item.on .st b{color:var(--blue-ink)}
+.stage-item .sv{font-size:11px;color:var(--subtle);white-space:nowrap;font-style:normal}
+.stage-item .sv.ok{color:var(--green)}
+.stage-item .sv.warn{color:var(--amber)}
+.side-card{margin-top:auto;border:1px solid var(--line);border-radius:var(--r-l);
+  padding:13px;background:linear-gradient(160deg,#fbfcff,#f6f9ff)}
+.side-card .lb{font-size:11px;color:var(--subtle);font-weight:650}
+.side-card .tt{font-size:13px;font-weight:750;margin:5px 0 9px}
+.side-card .num{display:flex;align-items:baseline;justify-content:space-between}
+.side-card .num b{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.side-card .num span{font-size:11px;color:var(--subtle)}
+.mini-bar{height:5px;border-radius:99px;background:#e4eaf3;overflow:hidden;margin:9px 0 8px}
+.mini-bar i{display:block;height:100%;border-radius:inherit;
+  background:linear-gradient(90deg,var(--blue),var(--blue-2))}
+.side-card .kv{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+.side-card .kv b{color:var(--ink2);font-weight:750}
+.side-card p{margin:7px 0 0;font-size:11px;color:var(--subtle);line-height:1.55}
+.side-foot{display:flex;align-items:center;gap:8px;padding:12px 6px 2px;
+  font-size:12px;color:var(--muted);cursor:pointer}
+.side-foot:hover{color:var(--blue)}
+
+/* 右侧 AI 面板 */
+.aipanel{position:fixed;top:var(--top);right:0;bottom:0;width:var(--ai);z-index:35;
+  background:#fff;border-left:1px solid var(--line);display:none;flex-direction:column}
+body.has-ai .aipanel{display:flex}
+.ai-hd{padding:15px 17px;border-bottom:1px solid var(--line2);display:flex;
+  align-items:center;gap:10px}
+.ai-gem{width:33px;height:33px;border-radius:10px;flex:none;
+  background:linear-gradient(150deg,#3b86ff,#5b3fd0);color:#fff;display:grid;place-items:center;
+  font-size:14px;box-shadow:0 6px 15px rgba(59,134,255,.25)}
+.ai-hd b{display:block;font-size:13.5px;font-weight:750}
+.ai-hd span{display:block;font-size:11.5px;color:var(--subtle)}
+.ai-scope{margin:14px 17px 0;border:1px solid var(--line);border-radius:var(--r-m);
+  padding:9px 11px;background:#fafbfd}
+.ai-scope small{display:block;font-size:10.5px;color:var(--subtle);font-weight:650}
+.ai-scope b{display:block;font-size:11.5px;font-weight:650;margin-top:3px;line-height:1.5;color:var(--ink2)}
+.ai-body{flex:1;overflow:auto;padding:14px 17px 8px;display:flex;flex-direction:column;gap:11px}
+.ai-msg{background:#f3f6fc;border-radius:12px 12px 12px 4px;padding:11px 12px;
+  font-size:12.5px;line-height:1.7;color:var(--ink2);max-width:100%;white-space:pre-wrap}
+.ai-msg.me{background:var(--blue);color:#fff;border-radius:12px 12px 4px 12px;align-self:flex-end}
+.ai-chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 17px 10px}
+.ai-chips button{height:27px;padding:0 10px;border:1px solid var(--line);border-radius:99px;
+  background:#fff;font-size:11.5px;color:var(--muted);transition:.15s}
+.ai-chips button:hover{border-color:var(--blue-line);color:var(--blue-ink);background:var(--blue-soft)}
+.ai-compose{padding:0 15px 15px}
+.ai-box{border:1px solid var(--line);border-radius:12px;background:#fff;padding:9px;
+  box-shadow:0 5px 16px rgba(26,44,78,.06);position:relative}
+.ai-box:focus-within{border-color:var(--blue-line);box-shadow:0 0 0 3px rgba(22,104,240,.1)}
+.ai-box textarea{width:100%;height:52px;border:0;resize:none;outline:0;font-size:12.5px;
+  line-height:1.6;padding-right:34px;background:transparent}
+.ai-send{position:absolute;right:9px;bottom:9px;width:29px;height:29px;border-radius:8px;
+  background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+.ai-send:hover{background:var(--blue-d)}
+.ai-tabs{display:flex;gap:3px;padding:11px 15px 0;border-bottom:1px solid var(--line2)}
+.ai-tabs button{height:32px;padding:0 10px;font-size:12px;color:var(--muted);
+  border-bottom:2px solid transparent;border-radius:0}
+.ai-tabs button.on{color:var(--blue-ink);border-color:var(--blue);font-weight:700}
+.src-item{display:flex;gap:9px;align-items:center;border:1px solid var(--line);
+  border-radius:var(--r-m);padding:9px 10px}
+.src-item i{font-style:normal;width:26px;height:26px;border-radius:7px;flex:none;
+  background:var(--blue-soft);color:var(--blue-ink);display:grid;place-items:center;
+  font-size:10px;font-weight:800}
+.src-item b{display:block;font-size:11.5px;font-weight:700}
+.src-item span{display:block;font-size:10.5px;color:var(--subtle)}
+.src-item em{font-style:normal;font-size:10.5px;color:var(--green);font-weight:700;margin-left:auto}
+.ver-line{position:relative;padding:0 0 15px 17px}
+.ver-line:before{content:"";position:absolute;left:4px;top:5px;bottom:-3px;width:1px;background:#dde3ec}
+.ver-line:last-child:before{display:none}
+.ver-line:after{content:"";position:absolute;left:0;top:4px;width:9px;height:9px;
+  border-radius:50%;background:#fff;border:2px solid var(--blue)}
+.ver-line.old:after{border-color:#c3cddd}
+.ver-line b{display:block;font-size:11.5px;font-weight:700}
+.ver-line p{margin:3px 0 0;font-size:10.5px;color:var(--muted);line-height:1.55}
+
+/* 页头 */
+.crumb{font-size:12px;color:var(--blue);font-weight:700;letter-spacing:.02em;margin-bottom:7px}
+.crumb .g{color:var(--subtle);font-weight:600}
+.phead{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px}
+.phead h1{margin:0 0 6px;font-size:26px;font-weight:780;letter-spacing:-.03em;line-height:1.25}
+.phead p{margin:0;font-size:13px;color:var(--muted)}
+.phead-act{display:flex;align-items:center;gap:9px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+
+/* 蓝色横幅 */
+.banner{border-radius:var(--r-l);padding:22px 26px;color:#fff;position:relative;overflow:hidden;
+  background:linear-gradient(105deg,#1560e6 0%,#1668f0 46%,#2f80f7 100%);
+  box-shadow:0 12px 30px rgba(21,96,230,.2);display:flex;align-items:center;gap:26px}
+.banner:after{content:"";position:absolute;right:-90px;top:-120px;width:330px;height:330px;
+  border-radius:50%;border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 0 0 44px rgba(255,255,255,.04),0 0 0 92px rgba(255,255,255,.03)}
+.banner-c{position:relative;z-index:1;flex:1;min-width:0}
+.banner .bpill{display:inline-flex;height:24px;align-items:center;padding:0 10px;border-radius:999px;
+  background:rgba(255,255,255,.2);font-size:11.5px;font-weight:700;margin-bottom:11px}
+.banner h2{margin:0 0 9px;font-size:23px;font-weight:750;letter-spacing:-.02em;line-height:1.3}
+.banner p{margin:0;font-size:12.5px;line-height:1.75;color:#d7e6ff;max-width:820px}
+.banner .btn{margin-top:16px}
+.ring{position:relative;z-index:1;width:112px;height:112px;flex:none;display:grid;place-items:center}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring .rt{position:relative;text-align:center}
+.ring .rt b{display:block;font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.ring .rt span{display:block;font-size:10.5px;color:#c6dcff;margin-top:1px}
+.ring .rt em{display:block;font-style:normal;font-size:10px;color:#9fe6c5;margin-top:2px}
+
+/* 指标卡 */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:14px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:var(--r-l);
+  padding:15px 17px;box-shadow:var(--sh-1)}
+.metric .mt{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.metric .lb{font-size:12px;color:var(--muted);font-weight:600}
+.metric .vl{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.15;white-space:nowrap}
+.metric .vl.sm{font-size:19px}
+.metric small{display:block;margin-top:5px;font-size:11px;color:var(--subtle)}
+.metric.stack .mt{display:block}
+.metric.stack .vl{margin-top:7px}
+.metric.stack .lb{font-size:12px}
+.metric small.up{color:var(--green);font-weight:650}
+.metric small.warn{color:var(--amber);font-weight:650}
+
+/* 流程步进器 */
+.stepper{display:flex;align-items:flex-start;padding:6px 4px 2px}
+.stp{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
+.stp:not(:last-child):after{content:"";position:absolute;top:17px;left:calc(50% + 22px);
+  right:calc(-50% + 22px);height:2px;background:#e6ebf3;border-radius:2px}
+.stp.done:not(:last-child):after{background:var(--green-line)}
+.stp .c{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  font-size:13px;font-weight:750;background:#f1f4f9;color:#93a0b4;border:1px solid #e4e9f1;
+  position:relative;z-index:1}
+.stp.done .c{background:var(--green-soft);color:var(--green);border-color:var(--green-line)}
+.stp.cur .c{background:var(--blue);color:#fff;border-color:var(--blue);
+  box-shadow:0 0 0 4px rgba(22,104,240,.13)}
+.stp b{display:block;margin-top:9px;font-size:12.5px;font-weight:700}
+.stp.cur b{color:var(--blue-ink)}
+.stp span{display:block;font-size:10.5px;color:var(--subtle);margin-top:2px}
+
+/* 通用列表 / 表格 */
+.kv-list{display:grid;grid-template-columns:1fr 1fr;gap:15px 22px}
+.kv-list .kvi small{display:block;font-size:11.5px;color:var(--subtle);margin-bottom:3px}
+.kv-list .kvi b{font-size:13px;font-weight:700}
+.kv-list .kvi.full{grid-column:1/-1}
+.feed{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.feed:last-child{border:0;padding-bottom:0}
+.feed .fi{width:25px;height:25px;border-radius:7px;flex:none;display:grid;place-items:center;
+  font-size:11px;font-weight:800;font-style:normal}
+.feed .fi.ok{background:var(--green-soft);color:var(--green)}
+.feed .fi.ai{background:var(--blue-soft);color:var(--blue-ink)}
+.feed .fi.wa{background:var(--amber-soft);color:var(--amber)}
+
+table.tbl{width:100%;border-collapse:collapse}
+table.tbl th{text-align:left;font-size:11.5px;font-weight:700;color:var(--muted);
+  padding:10px 12px;background:#f8fafd;border-bottom:1px solid var(--line);white-space:nowrap}
+table.tbl td{padding:12px;font-size:12.5px;border-bottom:1px solid var(--line2);vertical-align:middle;line-height:1.6}
+table.tbl tr:last-child td{border-bottom:0}
+table.tbl tbody tr:hover td{background:#fafcff}
+.tbl-wrap{overflow:auto;border-top:1px solid var(--line2)}
+
+/* 提示条 */
+.note{border-radius:var(--r-m);padding:12px 14px;font-size:12.5px;line-height:1.7}
+.note b{display:block;font-size:13px;margin-bottom:3px}
+.note ul{margin:6px 0 0;padding-left:17px}
+.note li{margin-bottom:3px}
+.note-amber{background:var(--amber-soft);border:1px solid var(--amber-line);color:var(--amber-ink)}
+.note-green{background:var(--green-soft);border:1px solid var(--green-line);color:var(--green-ink)}
+.note-blue{background:var(--blue-soft);border:1px solid var(--blue-line);color:var(--blue-ink)}
+.note-red{background:var(--red-soft);border:1px solid var(--red-line);color:var(--red-ink)}
+.note-row{display:flex;align-items:center;gap:14px}
+.note-row .nc{flex:1;min-width:0}
+
+/* Toast / Modal */
+.toast{position:fixed;left:50%;bottom:34px;transform:translate(-50%,16px);z-index:200;
+  background:#16233c;color:#fff;border-radius:11px;padding:11px 16px;font-size:12.5px;
+  box-shadow:var(--sh-3);opacity:0;pointer-events:none;transition:.24s;max-width:420px}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.mask{position:fixed;inset:0;z-index:150;background:rgba(16,28,50,.4);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;padding:24px}
+.mask.on{display:flex}
+.modal{width:min(440px,100%);background:#fff;border-radius:var(--r-xl);box-shadow:var(--sh-3);
+  padding:26px;position:relative;animation:pop .2s ease}
+.modal.wide{width:min(760px,100%);padding:0;overflow:hidden}
+.modal.xlarge{width:min(900px,100%)}
+@keyframes pop{from{opacity:0;transform:scale(.97) translateY(6px)}to{opacity:1;transform:none}}
+.modal-x{position:absolute;right:16px;top:16px;width:28px;height:28px;border-radius:8px;
+  color:var(--subtle);display:grid;place-items:center;font-size:17px}
+.modal-x:hover{background:#f2f5f9}
+.modal h2{margin:11px 0 7px;font-size:20px;font-weight:780;letter-spacing:-.02em}
+.modal .sub{font-size:12px;color:var(--muted);line-height:1.7;margin:0 0 18px}
+.fld{display:block;margin-bottom:14px}
+.fld span{display:block;font-size:12px;color:var(--ink2);font-weight:650;margin-bottom:6px}
+.fld span i{font-style:normal;color:var(--red);margin-left:2px}
+.fld input,.fld select,.fld textarea{width:100%;height:38px;border:1px solid var(--line);
+  border-radius:var(--r-m);background:#fbfcfe;padding:0 12px;font-size:13px;outline:0;transition:.15s}
+.fld textarea{height:74px;padding:10px 12px;resize:vertical;line-height:1.65}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--blue-line);
+  background:#fff;box-shadow:0 0 0 3px rgba(22,104,240,.1)}
+.fld select{appearance:none;background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' stroke='%2393a0b4' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center}
+.fld .hint{font-size:11px;color:var(--subtle);margin-top:4px;font-weight:400}
+.fld input.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;letter-spacing:.02em}
+
+/* 首页 Landing */
+.land{max-width:1180px;margin:0 auto;padding:52px 26px 70px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:56px;align-items:center;
+  min-height:460px}
+.hero-kick{display:inline-flex;align-items:center;height:27px;padding:0 12px;border-radius:999px;
+  background:var(--blue-soft);color:var(--blue-ink);font-size:12px;font-weight:700;
+  border:1px solid var(--blue-line)}
+.hero h1{margin:20px 0 18px;font-size:44px;line-height:1.24;font-weight:800;letter-spacing:-.045em}
+.hero h1 em{font-style:normal;color:var(--blue);display:block}
+.hero>div>p{margin:0;font-size:14.5px;line-height:1.8;color:var(--muted);max-width:520px}
+.hero-btns{display:flex;gap:11px;margin:26px 0 18px}
+.hero-checks{display:flex;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--subtle)}
+.hero-checks span:before{content:"✓";color:var(--green);margin-right:5px;font-weight:800}
+.demo-card{background:#fff;border:1px solid var(--line);border-radius:var(--r-xl);
+  box-shadow:0 20px 50px rgba(20,38,72,.09);padding:19px}
+.demo-card .dh{display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:13px;border-bottom:1px solid var(--line2)}
+.demo-card .dh small{font-size:11px;color:var(--subtle)}
+.demo-card .dh b{display:block;font-size:15px;font-weight:750;margin-top:3px}
+.dstep{display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:var(--r-m);
+  margin-top:5px}
+.dstep.cur{background:var(--blue-soft)}
+.dstep .dn{width:25px;height:25px;border-radius:50%;flex:none;display:grid;place-items:center;
+  font-size:11px;font-weight:750;background:#f1f4f9;color:#93a0b4;border:1px solid #e4e9f1}
+.dstep.ok .dn{background:var(--green-soft);color:var(--green);border-color:var(--green-line)}
+.dstep.cur .dn{background:var(--blue);color:#fff;border-color:var(--blue)}
+.dstep b{display:block;font-size:12.5px;font-weight:700}
+.dstep span{display:block;font-size:11px;color:var(--subtle)}
+.dnext{margin-top:14px;background:var(--navy);border-radius:var(--r-m);padding:13px 14px;
+  display:flex;align-items:center;gap:12px}
+.dnext small{display:block;font-size:10.5px;color:#8fb0d8}
+.dnext b{display:block;font-size:12px;color:#fff;font-weight:650;margin-top:2px;line-height:1.5}
+.caps{margin-top:76px;text-align:center}
+.caps .ck{font-size:11.5px;letter-spacing:.16em;color:var(--blue);font-weight:750}
+.caps h2{margin:13px 0 34px;font-size:31px;font-weight:780;letter-spacing:-.035em}
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:left}
+.cap{background:#fff;border:1px solid var(--line);border-radius:var(--r-l);padding:17px 18px;
+  display:flex;gap:13px;transition:.18s;cursor:pointer}
+.cap:hover{border-color:var(--blue-line);box-shadow:0 10px 26px rgba(22,104,240,.09);
+  transform:translateY(-2px)}
+.cap .cc{width:34px;height:34px;border-radius:9px;flex:none;background:var(--blue-soft);
+  color:var(--blue-ink);display:grid;place-items:center;font-size:11.5px;font-weight:800}
+.cap b{display:block;font-size:13.5px;font-weight:750}
+.cap p{margin:5px 0 9px;font-size:11.5px;color:var(--muted);line-height:1.65;min-height:32px}
+.cap .cf{font-size:11px;color:var(--blue-ink);font-weight:650}
+.cap .cf em{font-style:normal;color:var(--green);margin-left:4px}
+
+/* 新建项目 / 生成中 */
+.form-wrap{max-width:1000px;margin:0 auto;padding:34px 26px 70px}
+.form-card{background:#fff;border:1px solid var(--line);border-radius:var(--r-xl);
+  box-shadow:var(--sh-2);overflow:hidden}
+.fsec{padding:24px 28px}
+.fsec+.fsec{border-top:1px solid var(--line2)}
+.fsec-hd{display:flex;gap:12px;margin-bottom:20px}
+.fsec-hd .fn{width:26px;height:26px;border-radius:8px;flex:none;background:var(--blue-soft);
+  color:var(--blue-ink);display:grid;place-items:center;font-size:12px;font-weight:800}
+.fsec-hd b{display:block;font-size:15px;font-weight:750}
+.fsec-hd p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:16px 22px}
+.f2 .full{grid-column:1/-1}
+.up-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.up{border:1px dashed #ccd6e6;border-radius:var(--r-l);padding:17px 13px;text-align:center;
+  cursor:pointer;transition:.16s;background:#fcfdff;position:relative}
+.up:hover{border-color:var(--blue);background:#f7faff}
+.up .ui{width:27px;height:27px;border-radius:8px;margin:0 auto 9px;display:grid;place-items:center;
+  background:var(--blue-soft);color:var(--blue-ink);font-size:13px;font-weight:800}
+.up.done .ui{background:var(--blue-soft);color:var(--blue)}
+.up b{display:block;font-size:12.5px;font-weight:700}
+.up .fn2{display:block;font-size:11px;color:var(--blue);margin-top:6px;word-break:break-all}
+.up .ft{display:block;font-size:10.5px;color:var(--subtle);margin-top:6px}
+.up input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.form-ft{padding:16px 28px;border-top:1px solid var(--line2);background:#fbfcfe;
+  display:flex;align-items:center;justify-content:space-between;gap:12px}
+.form-ft .auto{font-size:11.5px;color:var(--muted)}
+.form-ft .auto:before{content:"✓";color:var(--green);margin-right:5px;font-weight:800}
+.gen-wrap{max-width:560px;margin:0 auto;padding:120px 26px;text-align:center}
+.gen-ic{width:62px;height:62px;border-radius:18px;margin:0 auto 20px;display:grid;place-items:center;
+  background:var(--green-soft);color:var(--green);font-size:29px;font-weight:800}
+.gen-wrap h1{margin:14px 0 10px;font-size:29px;font-weight:780;letter-spacing:-.03em}
+.gen-wrap>p{margin:0 0 26px;font-size:13px;color:var(--muted)}
+.gen-bar{height:6px;border-radius:99px;background:#e4eaf3;overflow:hidden;margin:0 auto 26px;
+  max-width:380px}
+.gen-bar i{display:block;height:100%;border-radius:inherit;width:0;
+  background:linear-gradient(90deg,var(--blue),var(--blue-2));transition:width .5s ease}
+
+/* 文档视图 */
+.doc{background:#fff;border:1px solid var(--line);border-radius:var(--r-l);
+  box-shadow:var(--sh-1);overflow:hidden}
+.doc-tb{height:47px;padding:0 18px;border-bottom:1px solid var(--line2);background:#fbfcfe;
+  display:flex;align-items:center;justify-content:space-between}
+.doc-tb .dv{font-size:12px;color:var(--muted);font-weight:650}
+.doc-tb .da{display:flex;align-items:center;gap:14px;font-size:12.5px;color:var(--muted)}
+.doc-tb .da span{cursor:pointer}
+.doc-tb .da span:hover{color:var(--blue)}
+.doc-bd{max-width:760px;margin:0 auto;padding:34px 40px 34px}
+.doc-bd h2{margin:0;font-size:21px;text-align:center;font-weight:750;letter-spacing:-.02em}
+.doc-meta{text-align:center;font-size:11.5px;color:var(--subtle);margin:9px 0 30px}
+.doc-bd h3{margin:26px 0 12px;font-size:15px;font-weight:750}
+.doc-bd h3:first-of-type{margin-top:0}
+.doc-tbl{border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
+.doc-tr{display:grid;grid-template-columns:126px 1fr;border-bottom:1px solid var(--line2)}
+.doc-tr:last-child{border:0}
+.doc-tr b{padding:11px 13px;background:#f8fafd;font-size:12.5px;font-weight:650;color:var(--muted)}
+.doc-tr span{padding:11px 13px;font-size:12.5px}
+.oitem{display:flex;gap:13px;border:1px solid var(--line);border-radius:var(--r-m);
+  padding:13px 14px;margin-bottom:9px;align-items:flex-start}
+.oitem i{width:26px;height:26px;border-radius:50%;flex:none;font-style:normal;
+  background:var(--blue-soft);color:var(--blue-ink);display:grid;place-items:center;
+  font-size:11.5px;font-weight:750}
+.oitem b{display:block;font-size:13px;font-weight:700}
+.oitem p{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.6}
+.oitem .ot{margin-left:auto;flex:none}
+.doc-ft{margin-top:22px}
+.stage-bar{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:var(--r-l);
+  padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  box-shadow:var(--sh-1)}
+.stage-bar p{margin:0;font-size:12.5px;color:var(--muted)}
+
+/* 执行主表 */
+.tool{display:flex;align-items:center;gap:9px;padding:12px 16px;border-bottom:1px solid var(--line2);
+  flex-wrap:wrap}
+.search{height:33px;width:230px;border:1px solid var(--line);border-radius:var(--r-s);
+  background:#fafbfd;display:flex;align-items:center;gap:7px;padding:0 10px}
+.search span{color:var(--subtle);font-size:13px}
+.search input{flex:1;border:0;outline:0;background:transparent;font-size:12.5px;min-width:0}
+.seg{display:flex;background:#f1f4f9;border-radius:var(--r-s);padding:3px;gap:2px}
+.seg button{height:26px;padding:0 11px;border-radius:6px;font-size:11.5px;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--blue-ink);font-weight:700;box-shadow:0 1px 3px rgba(24,40,70,.1)}
+.chk{height:31px;padding:0 11px;border:1px solid var(--line);border-radius:var(--r-s);
+  background:#fff;font-size:11.5px;color:var(--muted)}
+.chk.on{background:var(--amber-soft);border-color:var(--amber-line);color:var(--amber-ink);font-weight:700}
+.spacer{flex:1}
+.dtbl-wrap{overflow-x:auto;max-height:calc(100vh - 340px);position:relative}
+table.dtbl{border-collapse:separate;border-spacing:0;min-width:1640px;width:100%}
+table.dtbl th{height:40px;background:#f7f9fc;border-bottom:1px solid var(--line);
+  border-right:1px solid #eef1f6;text-align:left;font-size:11.5px;font-weight:700;
+  color:var(--muted);padding:0 12px;position:sticky;top:0;z-index:4;white-space:nowrap}
+table.dtbl td{height:54px;padding:9px 12px;font-size:12.5px;border-bottom:1px solid var(--line2);
+  border-right:1px solid #f2f5f9;background:#fff;vertical-align:middle;line-height:1.6}
+table.dtbl tbody tr{cursor:pointer}
+table.dtbl tbody tr:hover td{background:#f9fbff}
+table.dtbl tbody tr.sel td{background:#f1f7ff}
+table.dtbl tr.hide{display:none}
+table.dtbl th:nth-child(1),table.dtbl td:nth-child(1){position:sticky;left:0;width:66px;min-width:66px;z-index:3}
+table.dtbl th:nth-child(2),table.dtbl td:nth-child(2){position:sticky;left:66px;width:106px;min-width:106px;z-index:3}
+table.dtbl th:nth-child(3),table.dtbl td:nth-child(3){position:sticky;left:172px;width:206px;min-width:206px;z-index:3;
+  box-shadow:7px 0 11px -11px rgba(20,42,72,.5)}
+table.dtbl th:nth-child(-n+3){z-index:6;background:#f4f7fb}
+table.dtbl tbody tr:hover td:nth-child(-n+3){background:#f9fbff}
+table.dtbl tbody tr.sel td:nth-child(-n+3){background:#eaf3ff}
+table.dtbl td:nth-child(4){min-width:250px}
+table.dtbl td:nth-child(5){min-width:160px}
+table.dtbl td:nth-child(6),table.dtbl td:nth-child(7){min-width:118px}
+table.dtbl td:nth-child(8){min-width:112px}
+table.dtbl td:nth-child(9){min-width:96px}
+table.dtbl td:nth-child(10){min-width:130px}
+table.dtbl td:nth-child(11){min-width:200px}
+table.dtbl td:nth-child(12){min-width:104px}
+table.dtbl td:nth-child(13){min-width:180px}
+.wbs{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;color:#6f7d94;font-size:12px}
+.stage-cell{display:flex;align-items:center;gap:7px;font-weight:650;color:var(--ink2)}
+.sdot{width:7px;height:7px;border-radius:50%;flex:none}
+.tname{font-weight:650;color:var(--ink)}
+.cmuted{color:var(--subtle)}
+.pend{display:inline-flex;align-items:center;gap:4px;color:var(--amber-ink);background:var(--amber-soft);
+  border:1px dashed var(--amber-line);border-radius:6px;padding:2px 7px;font-size:11.5px;font-weight:650}
+.num{font-variant-numeric:tabular-nums}
+.tbl-ft{padding:12px 16px;border-top:1px solid var(--line2);background:#fbfcfe;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted)}
+
+/* 成果中心 A3 */
+.asset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.asset{background:#fff;border:1px solid var(--line);border-radius:var(--r-l);padding:17px;
+  box-shadow:var(--sh-1);display:flex;flex-direction:column;min-height:176px;position:relative}
+.asset .ast{position:absolute;right:14px;top:14px}
+.asset .ai2{width:35px;height:35px;border-radius:10px;background:var(--blue-soft);
+  color:var(--blue-ink);display:grid;place-items:center;font-size:12px;font-weight:800}
+.asset h4{margin:13px 0 5px;font-size:14px;font-weight:750}
+.asset p{margin:0;font-size:12px;color:var(--muted);line-height:1.65}
+.asset footer{margin-top:auto;padding-top:13px;display:flex;align-items:center;
+  justify-content:space-between;font-size:11px;color:var(--subtle)}
+.qrow{display:grid;grid-template-columns:26px 1fr 150px 104px;gap:12px;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--line2)}
+.qrow:last-child{border:0}
+.qrow i{width:25px;height:25px;border-radius:7px;font-style:normal;display:grid;place-items:center;
+  font-size:11px;font-weight:800;background:var(--green-soft);color:var(--green)}
+.qrow.run i{background:var(--blue-soft);color:var(--blue-ink)}
+.qrow.fail i{background:var(--red-soft);color:var(--red)}
+.qrow b{font-size:12.5px;font-weight:700}
+.qbar{height:5px;border-radius:99px;background:#e9edf4;overflow:hidden}
+.qbar em{display:block;height:100%;background:var(--green);width:100%}
+.qrow.run .qbar em{background:var(--blue);width:68%}
+.qrow.fail .qbar em{background:var(--red);width:34%}
+.qrow span{font-size:11.5px;color:var(--muted);text-align:right}
+
+/* A4 修改影响预览 */
+.diff-hd{display:flex;gap:22px;padding:17px 18px;align-items:flex-start}
+.instr{flex:1;border-left:3px solid var(--blue);padding-left:12px}
+.instr small{font-size:11px;color:var(--subtle);font-weight:650}
+.instr p{margin:5px 0 0;font-size:12.5px;line-height:1.75}
+.impact-n{text-align:right;flex:none}
+.impact-n b{display:block;font-size:27px;font-weight:800;color:var(--blue);letter-spacing:-.03em}
+.impact-n span{font-size:11px;color:var(--subtle)}
+.irow{border:1px solid var(--line);border-radius:var(--r-m);margin:0 18px 10px;overflow:hidden}
+.isum{display:flex;align-items:center;gap:12px;padding:12px 13px;background:#fbfcfe}
+.isum i{width:31px;height:31px;border-radius:8px;flex:none;font-style:normal;
+  background:var(--blue-soft);color:var(--blue-ink);display:grid;place-items:center;
+  font-size:11px;font-weight:800}
+.isum b{display:block;font-size:12.5px;font-weight:700}
+.isum p{margin:2px 0 0;font-size:11.5px;color:var(--muted)}
+.tgl{width:36px;height:20px;border-radius:99px;background:var(--blue);position:relative;
+  flex:none;transition:.18s;cursor:pointer}
+.tgl:after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;
+  right:2px;top:2px;transition:.18s}
+.tgl.off{background:#cfd7e4}
+.tgl.off:after{right:18px}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line2)}
+.dgrid>div{padding:11px 13px;font-size:12px;line-height:1.7}
+.dgrid>div+div{border-left:1px solid var(--line2)}
+.dgrid small{display:block;color:var(--subtle);margin-bottom:4px;font-size:11px}
+.del{color:#b04545;text-decoration:line-through;background:#fff8f8}
+.add{color:#0f7a55;background:#f4fbf8}
+
+/* R1 复盘 */
+.ledger{display:grid;grid-template-columns:1.15fr .85fr .95fr .7fr;gap:10px;padding:11px 0;
+  border-bottom:1px solid var(--line2);align-items:center}
+.ledger:last-child{border:0}
+.ledger.hd{font-size:11px;color:var(--subtle);font-weight:700}
+.ledger b{font-size:12px;font-weight:700}
+.ledger span{font-size:11.5px;color:var(--muted);line-height:1.55}
+.conf{height:5px;border-radius:99px;background:#edf0f5;overflow:hidden}
+.conf i{display:block;height:100%;background:var(--green);width:92%}
+.conf.mid i{background:var(--amber);width:58%}
+.conf.low i{background:var(--red);width:28%}
+.insight{padding:13px 0;border-bottom:1px solid var(--line2)}
+.insight:last-child{border:0}
+.insight .ih{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.insight h4{margin:0;font-size:13px;font-weight:750}
+.insight p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.75}
+.tag-fact{color:var(--green-ink);font-weight:750}
+.tag-infer{color:var(--blue-ink);font-weight:750}
+.tag-unk{color:var(--amber-ink);font-weight:750}
+.bars{display:flex;align-items:flex-end;justify-content:space-around;gap:14px;
+  height:190px;padding:14px 6px 0}
+.bar-c{flex:1;display:flex;flex-direction:column;align-items:center;height:100%}
+.bar-c .bl{font-size:11.5px;font-weight:650;color:var(--ink2);margin-bottom:8px}
+.bar-t{flex:1;width:34px;background:#eef2f8;border-radius:6px;display:flex;
+  flex-direction:column;justify-content:flex-end;overflow:hidden}
+.bar-t i{display:block;width:100%;background:linear-gradient(180deg,#3b86ff,#1668f0);
+  border-radius:6px;transition:height .9s cubic-bezier(.4,0,.2,1);height:0}
+.bar-c .bv{font-size:11.5px;color:var(--muted);margin-top:8px;font-variant-numeric:tabular-nums}
+.chart-ft{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 4px 0;font-size:11px;color:var(--subtle)}
+.chart-ft .lg:before{content:"●";color:var(--blue);margin-right:5px}
+.opp{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line2)}
+.opp:last-child{border:0}
+.opp .oc{flex:1;min-width:0}
+.opp b{display:block;font-size:13px;font-weight:700}
+.opp span{display:block;font-size:11.5px;color:var(--subtle);margin-top:2px}
+
+/* 响应式 */
+#btnSideToggle,#btnAiToggle{display:none}
+@media(max-width:1366px){
+  :root{--side:240px;--ai:318px}
+  .main{padding:20px 20px 56px}
+  .metrics{gap:11px}
+  .metric{padding:14px 15px}
+  .metric .vl{font-size:23px}
+  .banner{padding:20px 22px;gap:18px}
+  .banner h2{font-size:21px}
+  .hero{grid-template-columns:minmax(0,1fr) 380px;gap:40px}
+  .hero h1{font-size:40px}.cap-grid{gap:13px}
+}
+@media(max-width:1150px){
+  :root{--ai:0px}
+  body.has-ai .shell{padding-right:0}
+  .aipanel{transform:translateX(100%);transition:.24s;width:330px;box-shadow:-18px 0 40px rgba(20,36,66,.14)}
+  .aipanel.open{transform:none}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  body.has-ai #btnAiToggle{display:grid}
+  .ov2{grid-template-columns:1fr!important}
+  .hero{grid-template-columns:1fr;gap:34px;min-height:0;padding-top:10px}
+  .demo-card{max-width:440px}
+  .hero h1{font-size:36px}
+  .cap-grid{grid-template-columns:repeat(2,1fr)}
+  .asset-grid{grid-template-columns:repeat(2,1fr)}
+  .up-grid{grid-template-columns:repeat(2,1fr)}
+  .dtbl-wrap{max-height:none}
+}
+@media(max-width:860px){
+  :root{--side:0px}
+  body.has-side .shell{padding-left:0}
+  .sidebar{transform:translateX(-100%);transition:.24s;width:262px;box-shadow:18px 0 40px rgba(20,36,66,.14)}
+  .sidebar.open{transform:none}
+  .metrics{grid-template-columns:1fr}
+  .phead{display:block}
+  .phead-act{margin-top:13px;justify-content:flex-start}
+  body.has-side #btnSideToggle{display:grid}
+  .cap-grid,.asset-grid,.up-grid,.f2{grid-template-columns:1fr}
+  .banner{flex-direction:column;align-items:flex-start}
+  .stepper{overflow-x:auto;gap:18px}
+  .stp{min-width:104px}
+  .land{padding:32px 18px 50px}.hero h1{font-size:31px}
+  .caps h2{font-size:25px}.caps{margin-top:52px}
+  .doc-bd{padding:24px 18px 26px}
+  .phead h1{font-size:22px}
+  .form-wrap{padding:24px 16px 50px}
+  .fsec{padding:20px 18px}.form-ft{padding:14px 18px}
+  .ledger{grid-template-columns:1fr;gap:4px}
+  .ledger.hd{display:none}
+  .dgrid{grid-template-columns:1fr}.dgrid>div+div{border-left:0;border-top:1px solid var(--line2)}
+  .qrow{grid-template-columns:24px 1fr;gap:8px}
+  .qrow .qbar,.qrow span{grid-column:2}
+  .stage-bar{flex-direction:column;align-items:stretch;gap:11px}
+  .note-row{flex-direction:column;align-items:stretch}
+}
+
+/* API 配置卡 新增样式 */
+.api-row{display:grid;grid-template-columns:80px 1fr 120px 100px;gap:12px;align-items:center;
+  padding:11px 0;border-bottom:1px solid var(--line2)}
+.api-row:last-child{border:0}
+.api-row .api-id{font-weight:750;font-size:13px;color:var(--blue-ink)}
+.api-row input{height:34px;border:1px solid var(--line);border-radius:var(--r-s);
+  background:#fbfcfe;padding:0 10px;font-size:12px;outline:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.02em;width:100%}
+.api-row input:focus{border-color:var(--blue-line);box-shadow:0 0 0 3px rgba(22,104,240,.1)}
+.api-row .api-type{font-size:11px;color:var(--muted)}
+.api-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:650}
+.api-status.ok{color:var(--green)}
+.api-status.err{color:var(--red)}
+.api-status.idle{color:var(--subtle)}
+
+/* 加载 spinner */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--blue);
+  border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
+.spinner-sm{width:12px;height:12px;border-width:1.5px}
+
+/* Markdown 渲染区域 */
+.md-render{font-size:13px;line-height:1.8;color:var(--ink2)}
+.md-render h1,.md-render h2,.md-render h3{font-weight:750;margin:20px 0 10px;color:var(--ink)}
+.md-render h1{font-size:20px}.md-render h2{font-size:17px}.md-render h3{font-size:15px}
+.md-render p{margin:8px 0}
+.md-render ul,.md-render ol{padding-left:20px;margin:8px 0}
+.md-render li{margin:4px 0}
+.md-render table{width:100%;border-collapse:collapse;margin:12px 0}
+.md-render th,.md-render td{border:1px solid var(--line);padding:8px 10px;text-align:left;font-size:12px}
+.md-render th{background:#f8fafd;font-weight:700;color:var(--muted)}
+.md-render code{background:#f3f5f9;padding:2px 5px;border-radius:4px;font-size:12px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.md-render blockquote{border-left:3px solid var(--blue);padding-left:12px;margin:12px 0;color:var(--muted)}
+.md-render strong{font-weight:700;color:var(--ink)}
+.md-render hr{border:0;border-top:1px solid var(--line2);margin:16px 0}
+</style>
+</head>
+<body>
+
+<!-- ====== 顶栏 ====== -->
+<header class="topbar">
+  <div class="brand" data-go="landing">
+    <div class="brand-mark">A</div>
+    <div class="brand-copy"><b>AI 活动 SOP 智能运营平台</b><span>从活动策划到复盘沉淀的完整闭环</span></div>
+  </div>
+  <div class="top-right">
+    <button class="icon-btn" id="btnSideToggle" title="展开导航">☰</button>
+    <button class="icon-btn" id="btnAiToggle" title="AI 修改助手">✦</button>
+    <button class="icon-btn" data-toast="帮助中心将在正式版接入" title="帮助">?</button>
+    <button class="icon-btn" data-toast="暂无新通知" title="通知">•</button>
+    <button class="btn btn-primary" data-go="create">＋ 新建项目</button>
+    <button class="avatar-btn" data-go="admin" title="管理员后台">管</button>
+  </div>
+</header>
+
+<!-- ====== 侧栏 ====== -->
+<aside class="sidebar" id="sidebar">
+  <div class="proj-pick" data-toast="正式版可在此切换项目">
+    <div class="pm">AI</div>
+    <div class="pn"><b id="sideTitle">高管 AI 应用实战工作坊</b><span id="sideCode">ACT-20260804-001</span></div>
+    <i>⌄</i>
+  </div>
+
+  <div class="side-lb"><span>项目阶段</span><span class="pill pill-blue" id="projState">执行中</span></div>
+  <nav class="stage-nav" id="stageNav">
+    <button class="stage-item on" data-go="overview">
+      <span class="sn">⌂</span><span class="st"><small>OVERVIEW</small><b>项目总览</b></span></button>
+    <button class="stage-item done" data-go="a1">
+      <span class="sn">1</span><span class="st"><small>01 · 策划</small><b>SOP 大纲</b></span>
+      <i class="sv ok" id="navA1">已确认</i></button>
+    <button class="stage-item" data-go="a2">
+      <span class="sn">2</span><span class="st"><small>02 · 执行</small><b>执行主表</b></span>
+      <i class="sv warn" id="navA2">待确认</i></button>
+    <button class="stage-item" data-go="a3">
+      <span class="sn">3</span><span class="st"><small>03 · 成果</small><b>配套成果</b></span>
+      <i class="sv" id="navA3">6 项</i></button>
+    <button class="stage-item" data-go="r1">
+      <span class="sn">4</span><span class="st"><small>04 · 分析</small><b>数据复盘</b></span>
+      <i class="sv" id="navR1">待开始</i></button>
+    <button class="stage-item" data-go="r2">
+      <span class="sn">5</span><span class="st"><small>05 · 沉淀</small><b>经验沉淀</b></span>
+      <i class="sv" id="navR2">未生成</i></button>
+  </nav>
+
+  <div class="side-card">
+    <div class="lb">当前阶段</div>
+    <div class="tt" id="sideStage">执行主表待确认</div>
+    <div class="num"><b id="sideStep">2 / 5</b><span>项目阶段</span></div>
+    <div class="mini-bar"><i id="sideBar" style="width:42%"></i></div>
+    <div class="kv"><span>执行任务完成率</span><b id="sideRate">42%</b></div>
+    <p id="sideHint">检查负责人、日期和预算后确认主表</p>
+  </div>
+  <div class="side-foot" data-go="settings"><span>⚙</span><span>功能接入管理</span></div>
+</aside>
+
+<!-- ====== 右侧 AI 面板 ====== -->
+<aside class="aipanel" id="aipanel">
+  <div class="ai-hd">
+    <div class="ai-gem">✦</div>
+    <div style="flex:1;min-width:0"><b>AI 修改助手</b><span id="aiSub">基于项目资料联动修改成果</span></div>
+    <button class="icon-btn" id="aiClose">×</button>
+  </div>
+  <div class="ai-tabs" id="aiTabs">
+    <button class="on" data-tab="chat">对话</button>
+    <button data-tab="src">引用依据</button>
+    <button data-tab="detail" id="tabDetail" style="display:none">任务详情</button>
+    <button data-tab="ver">版本记录</button>
+  </div>
+
+  <div class="ai-scope" id="aiScope">
+    <small>当前参考范围</small>
+    <b id="aiScopeText">当前成果＋项目信息＋已确认成果＋分类附件</b>
+  </div>
+
+  <div class="ai-body" id="aiBodyChat">
+    <div class="ai-msg">你好，我可以帮你补充、精简或联动调整成果。修改前会先展示预览，不会直接覆盖草稿。</div>
+  </div>
+  <div class="ai-body" id="aiBodySrc" style="display:none">
+    <div class="src-item"><i>KB</i><div><b>高管 AI 工作坊｜活动设计</b><span>活动机制与阶段结构</span></div><em>92%</em></div>
+    <div class="src-item"><i>KB</i><div><b>高管 AI 工作坊｜执行与物料</b><span>会务、角色与风险</span></div><em>88%</em></div>
+    <div class="src-item"><i>¥</i><div><b>培训及运营费用｜历史参考</b><span>仅作费用口径参考</span></div><em>81%</em></div>
+    <div class="note note-blue" style="margin-top:4px">历史资料仅作<b style="display:inline">历史参考</b>，不可自动采用为当前项目已确认事实。</div>
+  </div>
+  <div class="ai-body" id="aiBodyDetail" style="display:none"></div>
+  <div class="ai-body" id="aiBodyVer" style="display:none">
+    <div id="verList"></div>
+    <div class="note note-amber" style="margin-top:6px">正式版本不会被直接覆盖。AI 修改只生成新草稿，人工确认后才发布为新正式版。</div>
+  </div>
+
+  <div class="ai-chips" id="aiChips">
+    <button>补充风险</button><button>细化任务</button><button>检查遗漏</button>
+  </div>
+  <div class="ai-compose">
+    <div class="ai-box">
+      <textarea id="aiInput" placeholder="输入修改要求，例如：将训后跟踪周期改成两周…"></textarea>
+      <button class="ai-send" id="aiSend">↑</button>
+    </div>
+  </div>
+</aside>
+
+<div class="shell">
+
+<!-- ====== 首页 ====== -->
+<section class="page" id="p-landing">
+  <div class="land">
+    <div class="hero">
+      <div>
+        <span class="hero-kick">AI 活动运营 · 端到端闭环</span>
+        <h1>把活动想法，变成<em>可执行 SOP 与完整成果</em></h1>
+        <p>从需求输入、历史案例参考，到执行主表、配套成果和数据复盘。关键节点由人工确认，AI 不替你编造未确认信息。</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary btn-lg" data-go="create">＋ 创建新项目</button>
+          <button class="btn btn-lg" id="btnContinue">继续已有项目 →</button>
+        </div>
+        <div class="hero-checks">
+          <span>对接 Dify 工作流</span><span>项目编号＋访问码</span><span>草稿与正式版分离</span>
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="dh">
+          <div><small>最近项目</small><b id="demoTitle">高管 AI 应用实战工作坊</b></div>
+          <span class="pill pill-blue pill-dot">执行中</span>
+        </div>
+        <div class="dstep ok"><span class="dn">✓</span><div><b>SOP 大纲</b><span>已确认</span></div></div>
+        <div class="dstep cur"><span class="dn">2</span><div><b>执行主表</b><span>待确认</span></div></div>
+        <div class="dstep"><span class="dn">3</span><div><b>配套成果</b><span>待生成</span></div></div>
+        <div class="dstep"><span class="dn">4</span><div><b>活动复盘</b><span>待开始</span></div></div>
+        <div class="dnext">
+          <div style="flex:1"><small>下一步</small><b>确认执行主表中的负责人、日期与预算</b></div>
+          <button class="btn btn-white btn-sm" data-go="overview">进入项目 →</button>
+        </div>
+      </div>
+    </div>
+    <div class="caps">
+      <div class="ck">ONE WORKSPACE · SIX AI CAPABILITIES</div>
+      <h2>策划、执行、修改、复盘，一条链路完成</h2>
+      <div class="cap-grid">
+        <div class="cap" data-go="a1"><div class="cc">A1</div><div>
+          <b>SOP 大纲生成</b><p>识别活动结构，检索历史经验，形成阶段大纲</p>
+          <div class="cf">Workflow</div></div></div>
+        <div class="cap" data-go="a2"><div class="cc">A2</div><div>
+          <b>执行主表生成</b><p>把正式大纲拆成任务、负责人、时间和交付物</p>
+          <div class="cf">Workflow</div></div></div>
+        <div class="cap" data-go="a3"><div class="cc">A3</div><div>
+          <b>配套成果生成</b><p>按需生成预算、分工、物料、通知等成果</p>
+          <div class="cf">Workflow</div></div></div>
+        <div class="cap" data-go="a4"><div class="cc">A4</div><div>
+          <b>AI 修改助手</b><p>先分析影响，再联动修改相关成果草稿</p>
+          <div class="cf">Chatflow</div></div></div>
+        <div class="cap" data-go="r1"><div class="cc">R1</div><div>
+          <b>活动复盘分析</b><p>校验数据口径，区分事实、推断与待确认项</p>
+          <div class="cf">Workflow</div></div></div>
+        <div class="cap" data-go="r2"><div class="cc">R2</div><div>
+          <b>复盘报告生成</b><p>基于人工确认结论输出正式报告与行动计划</p>
+          <div class="cf">Workflow</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 新建项目 ====== -->
+<section class="page" id="p-create">
+  <div class="form-wrap">
+    <div class="crumb">新建活动项目</div>
+    <div class="phead" style="margin-bottom:22px"><div>
+      <h1>让我们先了解这次活动</h1>
+      <p>填写已确认的信息即可；暂不确定的内容不会阻断生成，系统会标记为"待确认"。</p></div></div>
+    <div class="form-card">
+      <div class="fsec">
+        <div class="fsec-hd"><span class="fn">1</span><div>
+          <b>活动基本信息</b><p>用于识别活动类型、规模和核心目标</p></div></div>
+        <div class="f2">
+          <label class="fld"><span>活动名称<i>*</i></span><input id="fName" value="高管 AI 应用实战工作坊" /></label>
+          <label class="fld"><span>活动类型<i>*</i></span><select id="fType">
+            <option>培训 / 工作坊</option><option>比赛 / 评选</option>
+            <option>宣传 / 推广</option><option>会议 / 论坛</option></select></label>
+          <label class="fld full"><span>活动背景</span><textarea id="fBg">面向公司中高层管理者开展 AI 应用实战培训，结合真实业务场景形成行动计划。</textarea></label>
+          <label class="fld"><span>活动时间</span><input type="date" id="fDate" value="2026-08-26" /></label>
+          <label class="fld"><span>目标对象</span><input id="fTarget" value="102 名中高层管理者" /></label>
+          <label class="fld"><span>预算上限</span><input id="fBudget" value="20,000 元" /></label>
+          <label class="fld"><span>创建部门</span><input id="fDept" value="AI 研究院" /></label>
+        </div>
+      </div>
+      <div class="fsec">
+        <div class="fsec-hd"><span class="fn">2</span><div>
+          <b>分类附件</b><p>不同资料将分别解析，不会混入同一检索链路</p></div></div>
+        <div class="up-grid" id="uploadGrid">
+          <div class="up" id="upPersonnel"><div class="ui">＋</div><b>人员名单</b>
+            <span class="fn2" style="color:var(--subtle)">点击上传</span><span class="ft">XLSX / CSV</span>
+            <input type="file" accept=".xlsx,.csv,.xls" /></div>
+          <div class="up" id="upBudget"><div class="ui">＋</div><b>报价与预算</b>
+            <span class="fn2" style="color:var(--subtle)">点击上传</span><span class="ft">XLSX / PDF</span>
+            <input type="file" accept=".xlsx,.pdf,.xls" /></div>
+          <div class="up" id="upHistory"><div class="ui">＋</div><b>历史活动方案</b>
+            <span class="fn2" style="color:var(--subtle)">点击上传</span><span class="ft">DOCX / PDF</span>
+            <input type="file" accept=".docx,.pdf,.doc" /></div>
+          <div class="up" id="upOther"><div class="ui">＋</div><b>其他参考资料</b>
+            <span class="fn2" style="color:var(--subtle)">点击上传</span><span class="ft">DOCX / PDF / 图片</span>
+            <input type="file" /></div>
+        </div>
+      </div>
+      <div class="form-ft">
+        <span class="auto">已自动保存草稿</span>
+        <div style="display:flex;gap:9px">
+          <button class="btn" data-toast="草稿已保存，可稍后继续">仅保存草稿</button>
+          <button class="btn btn-primary" id="btnCreate">创建并生成 SOP 大纲 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 生成中 ====== -->
+<section class="page" id="p-generating">
+  <div class="gen-wrap">
+    <div class="gen-ic" id="genIcon">⟳</div>
+    <span class="pill pill-blue" id="genPill">生成中</span>
+    <h1 id="genTitle">正在生成 SOP 大纲</h1>
+    <p id="genDesc">正在调用 Dify 工作流，请稍候…</p>
+    <div class="gen-bar"><i id="genBar"></i></div>
+    <div id="genError" style="display:none" class="note note-red" style="margin-bottom:16px"></div>
+    <button class="btn btn-primary" id="btnGenDone" style="display:none">查看生成结果</button>
+  </div>
+</section>
+
+<!-- ====== 管理员后台 ====== -->
+<section class="page" id="p-admin">
+  <div class="form-wrap" style="max-width:1180px">
+    <div class="crumb">管理员后台</div>
+    <div class="phead">
+      <div><h1>功能接入管理</h1><p>配置 Dify 平台连接与各应用 API Key，完成后即可使用全部 AI 能力。</p></div>
+      <div class="phead-act">
+        <button class="btn" data-go="landing">返回首页</button>
+        <button class="btn" id="btnExportProject">导出项目数据</button>
+        <button class="btn" id="btnImportProject">导入项目数据</button>
+      </div>
+    </div>
+
+    <!-- ★★★ API 密钥配置 ★★★ -->
+    <div class="card" style="margin-bottom:14px" id="apiConfigCard">
+      <div class="card-hd bd">
+        <div><h3>🔑 API 密钥配置</h3>
+          <p>填写你的 Dify 平台地址和各应用的 API Key</p></div>
+        <div style="display:flex;gap:9px">
+          <button class="btn btn-sm" id="btnExportConfig">导出配置</button>
+          <button class="btn btn-sm" id="btnImportConfig">导入配置</button>
+          <button class="btn btn-sm btn-primary" id="btnTestAll">全部测试连接</button>
+        </div>
+      </div>
+      <div class="card-bd">
+        <label class="fld">
+          <span>Dify 平台地址<i>*</i></span>
+          <input id="cfgBaseUrl" class="mono" placeholder="例如：https://dify.yourcompany.com/v1" />
+          <div class="hint">填写公司 Dify 实例的 API 地址，通常以 /v1 结尾。如果遇到跨域问题，需在 Dify 端配置 CORS 或通过 Nginx 代理。</div>
+        </label>
+        <div style="margin-top:8px">
+          <div class="api-row" style="border-bottom:1px solid var(--line);padding-bottom:8px;font-weight:700;font-size:11.5px;color:var(--muted)">
+            <span>编号</span><span>API Key（每个 Dify 应用独立的密钥）</span><span>应用类型</span><span>状态</span>
+          </div>
+          <div class="api-row"><span class="api-id">A1</span>
+            <input id="cfgKeyA1" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" />
+            <span class="api-type">Workflow · SOP大纲</span>
+            <span class="api-status idle" id="stA1">未测试</span></div>
+          <div class="api-row"><span class="api-id">A2</span>
+            <input id="cfgKeyA2" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" />
+            <span class="api-type">Workflow · 执行主表</span>
+            <span class="api-status idle" id="stA2">未测试</span></div>
+          <div class="api-row"><span class="api-id">A3</span>
+            <input id="cfgKeyA3" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" />
+            <span class="api-type">Workflow · 配套成果</span>
+            <span class="api-status idle" id="stA3">未测试</span></div>
+          <div class="api-row"><span class="api-id">A4</span>
+            <input id="cfgKeyA4" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" />
+            <span class="api-type">Chatflow · 修改助手</span>
+            <span class="api-status idle" id="stA4">未测试</span></div>
+          <div class="api-row"><span class="api-id">R1</span>
+            <input id="cfgKeyR1" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" />
+            <span class="api-type">Workflow · 复盘分析</span>
+            <span class="api-status idle" id="stR1">未测试</span></div>
+          <div class="api-row"><span class="api-id">R2</span>
+            <input id="cfgKeyR2" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" />
+            <span class="api-type">Workflow · 复盘报告</span>
+            <span class="api-status idle" id="stR2">未测试</span></div>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:16px">
+          <button class="btn btn-primary" id="btnSaveConfig">保存配置</button>
+          <span style="font-size:11.5px;color:var(--subtle);line-height:35px">配置保存在浏览器本地，不会上传到任何服务器</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 应用注册表 -->
+    <div class="card">
+      <div class="card-hd bd"><div><h3>应用注册表</h3>
+        <p>Dify 工作流输入输出字段映射参考</p></div>
+        <span class="pill pill-blue">统一接口协议</span></div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th style="width:70px">编号</th><th style="width:150px">应用</th>
+          <th style="width:110px">类型</th><th>输入变量</th>
+          <th style="width:120px">连接状态</th></tr></thead>
+        <tbody>
+          <tr><td><b>A1</b></td><td>SOP 大纲生成</td><td><span class="pill">Workflow</span></td>
+            <td class="cmuted">activity_name, activity_type, background, date, target, budget, department</td>
+            <td><span class="pill" id="regSt1">未配置</span></td></tr>
+          <tr><td><b>A2</b></td><td>执行主表生成</td><td><span class="pill">Workflow</span></td>
+            <td class="cmuted">sop_outline, project_info</td>
+            <td><span class="pill" id="regSt2">未配置</span></td></tr>
+          <tr><td><b>A3</b></td><td>配套成果生成</td><td><span class="pill">Workflow</span></td>
+            <td class="cmuted">task_table, project_info, asset_type</td>
+            <td><span class="pill" id="regSt3">未配置</span></td></tr>
+          <tr><td><b>A4</b></td><td>AI 修改助手</td><td><span class="pill pill-purple">Chatflow</span></td>
+            <td class="cmuted">project_context (对话输入)</td>
+            <td><span class="pill" id="regSt4">未配置</span></td></tr>
+          <tr><td><b>R1</b></td><td>活动复盘分析</td><td><span class="pill">Workflow</span></td>
+            <td class="cmuted">event_data, task_table, feedback_data</td>
+            <td><span class="pill" id="regSt5">未配置</span></td></tr>
+          <tr><td><b>R2</b></td><td>复盘报告生成</td><td><span class="pill">Workflow</span></td>
+            <td class="cmuted">r1_analysis, project_info</td>
+            <td><span class="pill" id="regSt6">未配置</span></td></tr>
+        </tbody></table></div>
+      <div class="card-ft"><span style="font-size:12px;color:var(--muted)">
+        API Key 只存放在浏览器本地，不会下发到其他位置</span></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px" class="ov2">
+      <div class="card">
+        <div class="card-hd bd"><div><h3>项目列表</h3><p>当前浏览器中保存的项目</p></div></div>
+        <div class="card-bd" id="adminProjectList"><span style="color:var(--subtle)">暂无保存的项目</span></div>
+      </div>
+      <div class="card">
+        <div class="card-hd bd"><div><h3>Dify 工作流设计指引</h3>
+          <p>确保你的 Dify 应用输入变量名与下方一致</p></div></div>
+        <div class="card-bd" style="padding-top:6px">
+          <div class="note note-blue" style="margin-bottom:10px"><b>A1 输入变量参考</b>
+            activity_name（活动名称）、activity_type（活动类型）、background（活动背景）、date（活动时间）、target（目标对象）、budget（预算上限）、department（创建部门）</div>
+          <div class="note note-blue" style="margin-bottom:10px"><b>A2 输入变量参考</b>
+            sop_outline（A1 确认的大纲文本）、project_info（项目基本信息 JSON）</div>
+          <div class="note note-amber"><b>输出格式建议</b>
+            建议 Dify 工作流输出 Markdown 格式文本，平台会自动渲染。如果输出 JSON，将尝试结构化展示。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="main" id="wb">
+<!-- ====== 项目总览 ====== -->
+<section class="page" id="p-overview">
+  <div class="crumb">项目总览 <span class="g" id="ovCode">· ACT-20260804-001</span></div>
+  <div class="phead">
+    <div><h1 id="ovTitle">高管 AI 应用实战工作坊</h1>
+      <p id="ovDesc">围绕高管 AI 认知、真实业务场景和行动计划设计的一天实战工作坊。</p></div>
+    <div class="phead-act">
+      <button class="btn" data-go="settings">项目设置</button>
+      <button class="btn btn-primary" data-go="a2">继续当前任务 →</button></div>
+  </div>
+  <div class="banner">
+    <div class="banner-c">
+      <span class="bpill">执行阶段</span>
+      <h2 id="ovBannerTitle">下一步：确认 SOP 执行主表</h2>
+      <p id="ovBannerDesc">系统已根据确认的大纲生成任务。请检查并确认。</p>
+      <button class="btn btn-white" data-go="a2">进入执行主表</button>
+    </div>
+    <div class="ring">
+      <svg viewBox="0 0 112 112" width="112" height="112">
+        <circle cx="56" cy="56" r="49" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="7"/>
+        <circle cx="56" cy="56" r="49" fill="none" stroke="#fff" stroke-width="7"
+          stroke-linecap="round" stroke-dasharray="308" stroke-dashoffset="185" id="ovRing"/>
+      </svg>
+      <div class="rt"><b id="ovRingN">2 / 5</b><span>项目阶段</span></div>
+    </div>
+  </div>
+  <div class="metrics" id="ovMetrics">
+    <div class="metric"><div class="mt"><span class="lb">项目成果</span><span class="vl" id="ovAssetN">0</span></div>
+      <small id="ovAssetSub">等待生成</small></div>
+    <div class="metric"><div class="mt"><span class="lb">执行任务</span><span class="vl" id="ovTaskN">0</span></div>
+      <small id="ovTaskSub">待生成</small></div>
+    <div class="metric"><div class="mt"><span class="lb">待确认信息</span>
+      <span class="vl" style="color:var(--amber)" id="ovPendN">0</span></div>
+      <small id="ovPendSub">—</small></div>
+    <div class="metric"><div class="mt"><span class="lb">最近保存</span><span class="vl sm" id="ovSaveTime">—</span></div>
+      <small>所有修改已自动保存</small></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-hd bd"><div><h3>项目全流程</h3>
+      <p>每个关键阶段均需人工确认后再向下推进</p></div></div>
+    <div class="card-bd">
+      <div class="stepper" id="ovStepper">
+        <div class="stp" id="ovStp1"><div class="c">1</div><b>SOP 大纲</b><span>待生成</span></div>
+        <div class="stp" id="ovStp2"><div class="c">2</div><b>执行主表</b><span>待生成</span></div>
+        <div class="stp" id="ovStp3"><div class="c">3</div><b>配套成果</b><span>待生成</span></div>
+        <div class="stp" id="ovStp4"><div class="c">4</div><b>数据复盘</b><span>活动结束后</span></div>
+        <div class="stp" id="ovStp5"><div class="c">5</div><b>经验沉淀</b><span>等待沉淀</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-top:14px" class="ov2">
+    <div class="card">
+      <div class="card-hd bd"><div><h3>项目关键信息</h3><p>创建项目时录入</p></div>
+        <span class="link" data-go="settings">编辑</span></div>
+      <div class="card-bd"><div class="kv-list" id="ovInfo"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hd bd"><div><h3>最近动态</h3><p>关键操作与生成记录</p></div></div>
+      <div class="card-bd" style="padding-top:6px" id="ovFeed"><span style="color:var(--subtle)">暂无动态</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== A1 SOP 大纲 ====== -->
+<section class="page" id="p-a1">
+  <div class="crumb">01 <span class="g">· 活动策划</span></div>
+  <div class="phead">
+    <div><h1>SOP 大纲</h1><p>先确认整体活动结构，再进入执行细化。</p></div>
+    <div class="phead-act">
+      <span class="pill" id="a1Badge">待生成</span>
+      <button class="btn" id="btnRegenA1">重新生成</button></div>
+  </div>
+  <div id="a1Hold" class="card" style="padding:50px 20px;text-align:center;color:var(--muted)">
+    <div style="width:46px;height:46px;border-radius:13px;background:var(--blue-soft);color:var(--blue-ink);
+      display:grid;place-items:center;font-size:16px;font-weight:800;margin:0 auto 12px">A1</div>
+    尚未生成 SOP 大纲，请先创建项目
+  </div>
+  <div id="a1Content" style="display:none">
+    <div class="doc">
+      <div class="doc-tb">
+        <span class="dv" id="a1Ver">草稿 V1.0</span>
+        <div class="da"><span data-toast="编辑功能开发中">编辑</span>
+          <span id="btnDownloadA1">下载</span>
+          <span data-toast="更多操作">⋯</span></div>
+      </div>
+      <div class="doc-bd md-render" id="a1DocBody"></div>
+    </div>
+    <div class="stage-bar" id="a1Gate">
+      <p>确认大纲后将基于此生成执行主表</p>
+      <button class="btn btn-primary" id="btnConfirmA1">确认大纲并进入下一步 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ====== A2 执行主表 ====== -->
+<section class="page" id="p-a2">
+  <div class="crumb">02 <span class="g">· 活动执行</span></div>
+  <div class="phead">
+    <div><h1>SOP 执行主表</h1><p>将已确认的大纲细化为负责人、时间节点和交付物。</p></div>
+    <div class="phead-act">
+      <span class="pill pill-amber" id="a2Badge">待生成</span>
+      <button class="btn" id="btnGenA2">生成执行主表</button></div>
+  </div>
+  <div id="a2Hold" class="card" style="padding:50px 20px;text-align:center;color:var(--muted)">
+    <div style="width:46px;height:46px;border-radius:13px;background:var(--blue-soft);color:var(--blue-ink);
+      display:grid;place-items:center;font-size:16px;font-weight:800;margin:0 auto 12px">A2</div>
+    请先确认 A1 SOP 大纲，然后生成执行主表
+  </div>
+  <div id="a2Content" style="display:none">
+    <div class="card">
+      <div class="card-hd bd">
+        <div><h3>执行任务 · <span id="taskTotal">0</span> 项</h3>
+          <p id="a2Save">AI 生成内容，请人工确认</p></div>
+        <div style="display:flex;gap:9px;align-items:center">
+          <button class="btn btn-sm" id="btnViewToggle">完整视图</button>
+          <button class="btn btn-sm" id="btnFilter">筛选</button>
+          <button class="btn btn-sm" id="btnExportCsv">导出 CSV</button>
+        </div>
+      </div>
+      <div class="tool" id="a2Tool" style="display:none">
+        <label class="search"><span>⌕</span>
+          <input id="taskSearch" placeholder="搜索任务、负责人或交付物" /></label>
+        <div class="seg" id="stageSeg"><button class="on" data-stage="all">全部</button></div>
+        <button class="chk" id="pendOnly">只看待确认</button>
+        <span class="spacer"></span>
+        <button class="btn btn-sm" id="btnCopyTable">复制到 Excel</button>
+      </div>
+      <div class="tbl-wrap" id="a2TableWrap">
+        <div class="md-render" id="a2MdContent" style="padding:18px"></div>
+        <table class="dtbl" id="fullTbl" style="display:none"><thead><tr>
+          <th>WBS</th><th>阶段</th><th>任务事项</th><th>具体动作</th><th>交付物</th>
+          <th>负责人</th><th>协作方</th><th>截止时间</th><th>预算（元）</th>
+          <th>前置依赖</th><th>验收标准</th><th>状态</th><th>备注</th>
+        </tr></thead><tbody></tbody></table>
+      </div>
+      <div class="tbl-ft">
+        <span id="a2Stat">等待生成</span>
+      </div>
+    </div>
+    <div class="note note-amber note-row" id="a2Gate" style="margin-top:14px">
+      <div class="nc"><b>请确认执行主表内容</b>
+        确认后可生成配套成果。</div>
+      <button class="btn btn-primary" id="btnConfirmA2">确认主表并生成配套成果</button>
+    </div>
+  </div>
+</section>
+
+<!-- ====== A3 配套成果 ====== -->
+<section class="page" id="p-a3">
+  <div class="crumb">03 <span class="g">· 配套成果</span></div>
+  <div class="phead">
+    <div><h1>配套成果中心</h1><p>基于最新正式主表，按需生成可编辑、可发布、可单独下载的成果。</p></div>
+    <div class="phead-act">
+      <span class="pill pill-amber" id="a3Badge">主表待确认</span>
+      <button class="btn btn-primary" id="btnGenAssets">生成配套成果</button></div>
+  </div>
+  <div class="note note-amber note-row" id="a3Gate" style="margin-bottom:14px">
+    <div class="nc"><b>阶段门槛：执行主表尚未确认</b>
+      正式生成前需确认 A2 执行主表。</div>
+    <button class="btn" data-go="a2">前往确认主表 →</button>
+  </div>
+  <div id="a3Content" style="display:none">
+    <div class="card">
+      <div class="card-hd bd"><div><h3>生成结果</h3></div></div>
+      <div class="card-bd md-render" id="a3DocBody">等待生成...</div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== A4 修改影响预览 ====== -->
+<section class="page" id="p-a4">
+  <div class="crumb">A4 <span class="g">· 修改影响预览</span></div>
+  <div class="phead">
+    <div><h1>联动修改预览</h1><p>先判断影响范围，再选择要写入草稿的成果；正式版本不会被直接覆盖。</p></div>
+    <div class="phead-act">
+      <span class="pill pill-blue" id="a4State">草稿预览</span>
+      <button class="btn" id="btnA4Cancel">取消修改</button>
+      <button class="btn btn-primary" id="btnA4Write">确认并写入草稿</button></div>
+  </div>
+  <div class="card">
+    <div class="card-bd md-render" id="a4DocBody">
+      <p style="color:var(--muted);text-align:center;padding:30px 0">通过右侧 AI 修改助手发送修改指令后，预览将在此展示</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== R1 数据复盘 ====== -->
+<section class="page" id="p-r1">
+  <div class="crumb">04 <span class="g">· 数据复盘</span></div>
+  <div class="phead">
+    <div><h1>活动复盘分析</h1><p>先核对数据来源、统计范围和指标口径，再输出效益判断。</p></div>
+    <div class="phead-act">
+      <label class="btn" style="position:relative">导入复盘资料
+        <input type="file" id="r1FileInput" accept=".xlsx,.csv,.json" style="position:absolute;inset:0;opacity:0;cursor:pointer" /></label>
+      <button class="btn btn-primary" id="btnRunR1">开始分析</button></div>
+  </div>
+  <div class="note note-blue" style="margin-bottom:14px"><b>指标口径边界</b>
+    R1 不重新计算指标，只使用后端已校验并计算好的指标包。</div>
+  <div id="r1Hold" class="card" style="padding:50px 20px;text-align:center;color:var(--muted)">
+    <div style="width:46px;height:46px;border-radius:13px;background:var(--blue-soft);color:var(--blue-ink);
+      display:grid;place-items:center;font-size:16px;font-weight:800;margin:0 auto 12px">R1</div>
+    点击右上角「开始分析」调用 Dify 复盘工作流
+  </div>
+  <div id="r1Out" style="display:none">
+    <div class="card"><div class="card-bd md-render" id="r1DocBody"></div></div>
+    <div class="note note-amber note-row" style="margin-top:14px">
+      <div class="nc"><b>人工确认前，R1 结论不会传入 R2</b></div>
+      <button class="btn btn-primary" id="btnConfirmR1">确认结论并生成复盘报告</button>
+    </div>
+  </div>
+</section>
+
+<!-- ====== R2 经验沉淀 ====== -->
+<section class="page" id="p-r2">
+  <div class="crumb">05 <span class="g">· 经验沉淀</span></div>
+  <div class="phead">
+    <div><h1>复盘报告与行动沉淀</h1></div>
+    <div class="phead-act">
+      <span class="pill" id="r2Badge">待生成</span>
+      <button class="btn btn-primary" id="btnGenR2">生成复盘报告</button></div>
+  </div>
+  <div id="r2Hold" class="card" style="padding:50px 20px;text-align:center;color:var(--muted)">
+    <div style="width:46px;height:46px;border-radius:13px;background:var(--blue-soft);color:var(--blue-ink);
+      display:grid;place-items:center;font-size:16px;font-weight:800;margin:0 auto 12px">R2</div>
+    请先完成 R1 复盘分析并确认结论
+  </div>
+  <div id="r2Out" style="display:none">
+    <div class="card"><div class="card-bd md-render" id="r2DocBody"></div></div>
+  </div>
+</section>
+
+<!-- ====== 项目设置 ====== -->
+<section class="page" id="p-settings">
+  <div class="crumb">项目设置</div>
+  <div class="phead">
+    <div><h1>项目设置</h1><p>修改项目基本信息与访问方式。</p></div>
+    <div class="phead-act">
+      <button class="btn" data-go="overview">返回总览</button>
+      <button class="btn btn-primary" id="btnSaveSettings">保存设置</button></div>
+  </div>
+  <div class="card">
+    <div class="card-hd bd"><div><h3>基本信息</h3></div></div>
+    <div class="card-bd">
+      <div class="f2">
+        <label class="fld"><span>活动名称</span><input id="sName" /></label>
+        <label class="fld"><span>活动类型</span><select id="sType"><option>培训 / 工作坊</option>
+          <option>比赛 / 评选</option><option>宣传 / 推广</option><option>会议 / 论坛</option></select></label>
+        <label class="fld"><span>活动时间</span><input type="date" id="sDate" /></label>
+        <label class="fld"><span>目标对象</span><input id="sTarget" /></label>
+        <label class="fld"><span>预算上限</span><input id="sBudget" /></label>
+        <label class="fld"><span>创建部门</span><input id="sDept" /></label>
+        <label class="fld full"><span>核心目标</span><textarea id="sGoal"></textarea></label>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+</div>
+
+<!-- ====== 继续项目弹窗 ====== -->
+<div class="mask" id="mContinue"><div class="modal">
+  <button class="modal-x" data-close>×</button>
+  <span class="pill pill-blue">继续项目</span>
+  <h2>输入项目编号和访问码</h2>
+  <p class="sub">进入后可查看项目全部内容。</p>
+  <label class="fld"><span>项目编号</span><input id="inCode" /></label>
+  <label class="fld"><span>访问码</span><input type="password" id="inPass" /></label>
+  <button class="btn btn-primary btn-block btn-lg" id="btnVerify">验证并继续 →</button>
+</div></div>
+
+<!-- 隐藏文件输入 -->
+<input type="file" id="hiddenImportConfig" accept=".json" style="display:none" />
+<input type="file" id="hiddenImportProject" accept=".json" style="display:none" />
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var $=function(q,r){return(r||document).querySelector(q)},
+    $$=function(q,r){return Array.prototype.slice.call((r||document).querySelectorAll(q))};
+
+/* ==================== Toast ==================== */
+var toastT;
+function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('on')},3200)}
+
+/* ==================== 后端 API 基础地址 ==================== */
+var _savedApi = localStorage.getItem('sop_api_base');
+var API_BASE = _savedApi || window.location.origin;
+
+/* 自动检测后端是否可达 */
+setTimeout(async function(){
+  try{
+    var r=await fetch(API_BASE+'/api/stats',{method:'GET',signal:AbortSignal.timeout(5000)});
+    if(r.ok)return;throw new Error('not ok');
+  }catch(e){
+    var addr=prompt('无法连接后端 API（'+API_BASE+'）。\n请输入后端服务地址，例如：\nhttp://localhost:8000\nhttp://192.168.1.100:8000','http://localhost:8000');
+    if(addr){
+      addr=addr.replace(/\/+$/,'');
+      localStorage.setItem('sop_api_base',addr);
+      API_BASE=addr;
+      toast('已切换后端地址: '+addr);
+      loadConfig();
+    }
+  }
+},500);
+
+/* ==================== 配置管理（后端 API 版） ==================== */
+var CONFIG={
+  baseUrl:'',
+  keys:{A1:'',A2:'',A3:'',A4:'',R1:'',R2:''}
+};
+
+async function loadConfig(){
+  try{
+    var res=await fetch(API_BASE+'/api/config');
+    if(res.ok){
+      var data=await res.json();
+      CONFIG.baseUrl=data.base_url||'';
+      CONFIG.keys={A1:'',A2:'',A3:'',A4:'',R1:'',R2:''};
+      if(data.keys){for(var k in data.keys){if(data.keys[k]&&data.keys[k].raw)CONFIG.keys[k]=data.keys[k].raw}}
+    }
+  }catch(e){
+    try{var s=localStorage.getItem('sop_config');if(s){var c=JSON.parse(s);
+      CONFIG.baseUrl=c.baseUrl||'';CONFIG.keys=Object.assign({A1:'',A2:'',A3:'',A4:'',R1:'',R2:''},c.keys||{});
+    }}catch(e2){}
+  }
+  $('#cfgBaseUrl').value=CONFIG.baseUrl;
+  ['A1','A2','A3','A4','R1','R2'].forEach(function(k){$('#cfgKey'+k).value=CONFIG.keys[k]||''});
+  updateRegStatus();
+}
+
+async function saveConfig(){
+  CONFIG.baseUrl=$('#cfgBaseUrl').value.trim().replace(/\/+$/,'');
+  ['A1','A2','A3','A4','R1','R2'].forEach(function(k){CONFIG.keys[k]=$('#cfgKey'+k).value.trim()});
+  try{
+    var res=await fetch(API_BASE+'/api/config',{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({base_url:CONFIG.baseUrl,key_a1:CONFIG.keys.A1,key_a2:CONFIG.keys.A2,
+        key_a3:CONFIG.keys.A3,key_a4:CONFIG.keys.A4,key_r1:CONFIG.keys.R1,key_r2:CONFIG.keys.R2})});
+    if(res.ok){toast('配置已保存到服务器')}
+    else{localStorage.setItem('sop_config',JSON.stringify(CONFIG));toast('已保存到本地')}
+  }catch(e){localStorage.setItem('sop_config',JSON.stringify(CONFIG));toast('后端不可达，已保存到本地')}
+  updateRegStatus();
+}
+
+function updateRegStatus(){
+  var ids=['A1','A2','A3','A4','R1','R2'];
+  ids.forEach(function(k,i){
+    var el=$('#regSt'+(i+1));
+    if(CONFIG.keys[k]){el.textContent='已配置';el.className='pill pill-green'}
+    else{el.textContent='未配置';el.className='pill'}
+  });
+}
+
+$('#btnSaveConfig').onclick=function(){saveConfig()};
+
+$('#btnExportConfig').onclick=async function(){
+  try{var res=await fetch(API_BASE+'/api/export');if(res.ok){var data=await res.json();
+    var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='sop-platform-export.json';a.click();URL.revokeObjectURL(a.href);
+    toast('全量数据已导出')}else throw new Error()}
+  catch(e){var blob=new Blob([JSON.stringify(CONFIG,null,2)],{type:'application/json'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='sop-api-config.json';a.click();URL.revokeObjectURL(a.href);
+    toast('配置已导出')}};
+
+$('#btnImportConfig').onclick=function(){$('#hiddenImportConfig').click()};
+$('#hiddenImportConfig').onchange=function(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();r.onload=async function(){
+    try{var res=await fetch(API_BASE+'/api/import',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:r.result});
+      if(res.ok){loadConfig();toast('数据已导入到服务器')}else throw new Error()}
+    catch(ex){try{var c=JSON.parse(r.result);CONFIG.baseUrl=c.baseUrl||c.base_url||'';
+      if(c.keys)CONFIG.keys=Object.assign({A1:'',A2:'',A3:'',A4:'',R1:'',R2:''},c.keys);
+      loadConfig();toast('配置已导入')}
+      catch(ex2){toast('导入失败：文件格式不正确')}}};r.readAsText(f);e.target.value=''};
+
+/* 测试连接（通过后端代理） */
+async function testConnection(appId){
+  var stEl=$('#st'+appId);
+  if(!CONFIG.keys[appId]){stEl.textContent='缺少Key';stEl.className='api-status err';return}
+  stEl.innerHTML='<span class="spinner spinner-sm"></span>';stEl.className='api-status';
+  try{
+    var res=await fetch(API_BASE+'/api/config/test/'+appId,{method:'POST'});
+    var data=await res.json();
+    if(data.ok){stEl.textContent='✓ 连通';stEl.className='api-status ok'}
+    else{stEl.textContent='× '+(data.error||'失败');stEl.className='api-status err'}
+  }catch(ex){stEl.textContent='× 网络错误';stEl.className='api-status err'}
+}
+$('#btnTestAll').onclick=async function(){
+  await saveConfig();
+  for(var k of['A1','A2','A3','A4','R1','R2'])await testConnection(k);
+  toast('连接测试完成')};
+
+/* ==================== Dify API 调用（通过后端代理，解决跨域） ==================== */
+async function callDifyWorkflow(appId, inputs){
+  var res=await fetch(API_BASE+'/api/dify/workflow/'+appId,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({inputs:inputs,response_mode:'blocking',user:'sop-platform-user',
+      project_id:PROJECT.dbId||null})
+  });
+  if(!res.ok){var txt=await res.text();throw new Error('API 错误 '+res.status+': '+txt)}
+  return await res.json();
+}
+
+async function callDifyWorkflowStream(appId, inputs, onChunk){
+  var res=await fetch(API_BASE+'/api/dify/workflow-stream/'+appId,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({inputs:inputs,response_mode:'streaming',user:'sop-platform-user',
+      project_id:PROJECT.dbId||null})
+  });
+  if(!res.ok){var txt=await res.text();throw new Error('API 错误 '+res.status+': '+txt)}
+  var reader=res.body.getReader();var decoder=new TextDecoder();var buf='';var result=null;
+  while(true){
+    var chunk=await reader.read();if(chunk.done)break;
+    buf+=decoder.decode(chunk.value,{stream:true});
+    var lines=buf.split('\n');buf=lines.pop()||'';
+    for(var line of lines){
+      line=line.trim();if(!line||!line.startsWith('data:'))continue;
+      try{var d=JSON.parse(line.slice(5));
+        if(onChunk)onChunk(d);
+        if(d.event==='workflow_finished'&&d.data)result=d.data;
+      }catch(e){}
+    }
+  }
+  return result;
+}
+
+async function callDifyChatflow(appId, query, inputs, conversationId){
+  var res=await fetch(API_BASE+'/api/dify/chat/'+appId,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({inputs:inputs||{},query:query,response_mode:'blocking',
+      conversation_id:conversationId||'',user:'sop-platform-user',
+      project_id:PROJECT.dbId||null})
+  });
+  if(!res.ok){var txt=await res.text();throw new Error('API 错误 '+res.status+': '+txt)}
+  return await res.json();
+}
+
+async function callDifyChatflowStream(appId, query, inputs, conversationId, onToken){
+  var res=await fetch(API_BASE+'/api/dify/chat-stream/'+appId,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({inputs:inputs||{},query:query,response_mode:'streaming',
+      conversation_id:conversationId||'',user:'sop-platform-user',
+      project_id:PROJECT.dbId||null})
+  });
+  if(!res.ok){var txt=await res.text();throw new Error('API 错误 '+res.status+': '+txt)}
+  var reader=res.body.getReader();var decoder=new TextDecoder();var buf='';var answer='';var convId='';
+  while(true){
+    var chunk=await reader.read();if(chunk.done)break;
+    buf+=decoder.decode(chunk.value,{stream:true});
+    var lines=buf.split('\n');buf=lines.pop()||'';
+    for(var line of lines){
+      line=line.trim();if(!line||!line.startsWith('data:'))continue;
+      try{var d=JSON.parse(line.slice(5));
+        if(d.event==='message'&&d.answer){answer+=d.answer;if(onToken)onToken(answer,d)}
+        if(d.conversation_id)convId=d.conversation_id;
+      }catch(e){}
+    }
+  }
+  return{answer:answer,conversation_id:convId};
+}
+
+/* ==================== Markdown 简易渲染 ==================== */
+function renderMd(md){
+  if(!md)return'<p style="color:var(--muted)">无内容</p>';
+  var h=esc(md);
+  // headers
+  h=h.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+  h=h.replace(/^## (.+)$/gm,'<h2>$1</h2>');
+  h=h.replace(/^# (.+)$/gm,'<h1>$1</h1>');
+  // bold, italic
+  h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  h=h.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  // code
+  h=h.replace(/`([^`]+)`/g,'<code>$1</code>');
+  // hr
+  h=h.replace(/^---$/gm,'<hr>');
+  // table (basic)
+  h=h.replace(/^\|(.+)\|$/gm,function(m,row){
+    var cells=row.split('|').map(function(c){return c.trim()});
+    if(cells.every(function(c){return/^[-:]+$/.test(c)}))return'';
+    var tag=cells[0]&&cells[0].match(/^[A-Z一-鿿]/)?'td':'td';
+    return'<tr>'+cells.map(function(c){return'<'+tag+'>'+c+'</'+tag+'>'}).join('')+'</tr>'});
+  // wrap tables
+  h=h.replace(/((?:<tr>.*<\/tr>\s*)+)/g,'<table>$1</table>');
+  // lists
+  h=h.replace(/^- (.+)$/gm,'<li>$1</li>');
+  h=h.replace(/((?:<li>.*<\/li>\s*)+)/g,'<ul>$1</ul>');
+  h=h.replace(/^\d+\. (.+)$/gm,'<li>$1</li>');
+  // blockquote
+  h=h.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
+  // paragraphs
+  h=h.replace(/\n{2,}/g,'</p><p>');
+  h=h.replace(/\n/g,'<br>');
+  if(!h.startsWith('<'))h='<p>'+h+'</p>';
+  return h;
+}
+function esc(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+/* 提取 Dify 输出文本 */
+function extractOutput(data){
+  if(!data)return'';
+  // Dify workflow 输出通常在 data.outputs 下
+  var outputs=data.outputs||data;
+  if(typeof outputs==='string')return outputs;
+  // 尝试常见的输出字段名
+  var keys=['text','result','output','content','answer','report','analysis','sop_outline',
+            'task_table','asset_content','r1_result','r2_report'];
+  for(var k of keys){if(outputs[k]&&typeof outputs[k]==='string')return outputs[k]}
+  // 如果有多个字段，拼接展示
+  var parts=[];
+  for(var key in outputs){
+    if(outputs.hasOwnProperty(key)&&outputs[key]){
+      var val=outputs[key];
+      if(typeof val==='object')val=JSON.stringify(val,null,2);
+      parts.push('## '+key+'\n\n'+val);
+    }
+  }
+  if(parts.length)return parts.join('\n\n');
+  return JSON.stringify(outputs,null,2);
+}
+
+/* ==================== 项目状态 ==================== */
+var PROJECT={
+  id:'ACT-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-001',
+  dbId:null, // 后端数据库 ID
+  info:{name:'',type:'',bg:'',date:'',target:'',budget:'',dept:'',goal:''},
+  a1:{status:'pending',content:'',confirmed:false},
+  a2:{status:'pending',content:'',confirmed:false,tasks:[]},
+  a3:{status:'pending',content:'',generated:false},
+  a4:{conversationId:'',lastPreview:''},
+  r1:{status:'pending',content:'',confirmed:false,uploadedData:''},
+  r2:{status:'pending',content:'',generated:false},
+  versions:[],
+  feed:[]
+};
+
+/* 自动保存项目到后端 */
+async function autoSaveProject(){
+  if(!PROJECT.dbId||!PROJECT.info.name)return;
+  try{await fetch(API_BASE+'/api/projects/'+PROJECT.dbId,{
+    method:'PUT',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      name:PROJECT.info.name,activity_type:PROJECT.info.type,department:PROJECT.info.dept,
+      date:PROJECT.info.date,target:PROJECT.info.target,budget:PROJECT.info.budget,
+      background:PROJECT.info.bg,
+      a1_data:{status:PROJECT.a1.status,content:PROJECT.a1.content,confirmed:PROJECT.a1.confirmed},
+      a2_data:{status:PROJECT.a2.status,content:PROJECT.a2.content,confirmed:PROJECT.a2.confirmed,tasks:PROJECT.a2.tasks},
+      a3_data:{status:PROJECT.a3.status,content:PROJECT.a3.content,generated:PROJECT.a3.generated},
+      a4_data:{conversationId:PROJECT.a4.conversationId,lastPreview:PROJECT.a4.lastPreview},
+      r1_data:{status:PROJECT.r1.status,content:PROJECT.r1.content,confirmed:PROJECT.r1.confirmed},
+      r2_data:{status:PROJECT.r2.status,content:PROJECT.r2.content,generated:PROJECT.r2.generated},
+      versions:PROJECT.versions,feed:PROJECT.feed
+    })
+  })}catch(e){}
+}
+
+/* 从后端加载项目 */
+async function loadProjectFromDB(id){
+  try{
+    var res=await fetch(API_BASE+'/api/projects/'+id);
+    if(!res.ok)return false;
+    var p=await res.json();
+    PROJECT.dbId=p.id;
+    PROJECT.info={name:p.name,type:p.activity_type,bg:p.background,date:p.date,
+      target:p.target,budget:p.budget,dept:p.department,goal:p.background};
+    PROJECT.id='ACT-'+(p.date||'').replace(/-/g,'')+'-'+String(p.id).padStart(3,'0');
+    if(p.a1_data&&typeof p.a1_data==='object')Object.assign(PROJECT.a1,p.a1_data);
+    if(p.a2_data&&typeof p.a2_data==='object')Object.assign(PROJECT.a2,p.a2_data);
+    if(p.a3_data&&typeof p.a3_data==='object')Object.assign(PROJECT.a3,p.a3_data);
+    if(p.a4_data&&typeof p.a4_data==='object')Object.assign(PROJECT.a4,p.a4_data);
+    if(p.r1_data&&typeof p.r1_data==='object')Object.assign(PROJECT.r1,p.r1_data);
+    if(p.r2_data&&typeof p.r2_data==='object')Object.assign(PROJECT.r2,p.r2_data);
+    if(Array.isArray(p.versions))PROJECT.versions=p.versions;
+    if(Array.isArray(p.feed))PROJECT.feed=p.feed;
+    $('#sideTitle').textContent=PROJECT.info.name;$('#sideCode').textContent=PROJECT.id;
+    return true;
+  }catch(e){return false}
+}
+
+/* 加载管理后台项目列表 */
+async function loadAdminProjectList(){
+  try{
+    var res=await fetch(API_BASE+'/api/projects?page_size=50');
+    if(!res.ok)return;
+    var data=await res.json();
+    var el=$('#adminProjectList');
+    if(!data.items||!data.items.length){el.innerHTML='<span style="color:var(--subtle)">暂无保存的项目</span>';return}
+    el.innerHTML=data.items.map(function(p){
+      var statusMap={draft:'草稿',generating:'生成中',active:'进行中',completed:'已完成'};
+      return'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)">'+
+        '<div><b>'+esc(p.name)+'</b><span style="margin-left:8px;font-size:11px;color:var(--muted)">'+(statusMap[p.status]||p.status)+'</span></div>'+
+        '<div style="display:flex;gap:6px">'+
+        '<button class="btn btn-sm" onclick="openProjectFromList('+p.id+')">打开</button>'+
+        '<button class="btn btn-sm" style="color:var(--red)" onclick="deleteProjectFromList('+p.id+',\''+esc(p.name)+'\')">删除</button>'+
+        '</div></div>'
+    }).join('');
+  }catch(e){$('#adminProjectList').innerHTML='<span style="color:var(--subtle)">无法加载项目列表</span>'}
+}
+
+async function openProjectFromList(id){
+  var ok=await loadProjectFromDB(id);
+  if(ok){toast('已加载项目: '+PROJECT.info.name);go('overview')}
+  else{toast('加载项目失败')}
+}
+
+async function deleteProjectFromList(id,name){
+  if(!confirm('确定要删除项目「'+name+'」吗？此操作不可撤回。'))return;
+  try{await fetch(API_BASE+'/api/projects/'+id,{method:'DELETE'});
+    toast('已删除');loadAdminProjectList()}
+  catch(e){toast('删除失败')}
+}
+
+/* 定时自动保存 */
+setInterval(autoSaveProject,30000);
+
+function addFeed(icon,cls,text){
+  var now=new Date();var ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  PROJECT.feed.unshift({icon:icon,cls:cls,text:text,time:ts});
+  if(PROJECT.feed.length>20)PROJECT.feed.pop();
+  renderFeed();
+}
+function renderFeed(){
+  var el=$('#ovFeed');
+  if(!PROJECT.feed.length){el.innerHTML='<span style="color:var(--subtle)">暂无动态</span>';return}
+  el.innerHTML=PROJECT.feed.slice(0,5).map(function(f){
+    return'<div class="feed"><i class="fi '+f.cls+'">'+f.icon+'</i><div><b>'+f.text+'</b><span>'+f.time+'</span></div></div>'
+  }).join('');
+}
+
+function saveTime(){
+  var now=new Date();
+  $('#ovSaveTime').textContent=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  autoSaveProject(); // 每次状态变更自动保存到后端
+}
+
+/* ==================== 路由 ==================== */
+var PAGES={
+  landing:{side:false,ai:false},
+  create:{side:false,ai:false},
+  generating:{side:false,ai:false},
+  admin:{side:false,ai:false},
+  overview:{side:true,ai:false,nav:0},
+  a1:{side:true,ai:true,nav:1,scope:'SOP 大纲 ＋ 项目信息 ＋ 分类附件'},
+  a2:{side:true,ai:true,nav:2,scope:'当前成果＋项目信息＋已确认成果＋分类附件'},
+  a3:{side:true,ai:true,nav:3,scope:'已确认执行主表 ＋ 项目信息 ＋ 分类附件'},
+  a4:{side:true,ai:true,nav:2,scope:'当前正式成果 ＋ 本轮修改指令'},
+  r1:{side:true,ai:false,nav:4},
+  r2:{side:true,ai:false,nav:5},
+  settings:{side:true,ai:false,nav:0}
+};
+var curPage='landing';
+function go(id){
+  if(!PAGES[id])return;
+  curPage=id;var cfg=PAGES[id];
+  $$('.page').forEach(function(p){p.classList.toggle('on',p.id==='p-'+id)});
+  var inWb=['overview','a1','a2','a3','a4','r1','r2','settings'].indexOf(id)>=0;
+  $('#wb').classList.toggle('on',inWb);
+  document.body.classList.toggle('has-side',!!cfg.side);
+  document.body.classList.toggle('has-ai',!!cfg.ai);
+  if(cfg.nav!==undefined)$$('#stageNav .stage-item').forEach(function(b,i){b.classList.toggle('on',i===cfg.nav)});
+  if(cfg.scope)$('#aiScopeText').textContent=cfg.scope;
+  $('#tabDetail').style.display=(id==='a2')?'':'none';
+  $('#sidebar').classList.remove('open');$('#aipanel').classList.remove('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='overview')refreshOverview();
+  if(id==='a1')refreshA1();
+  if(id==='a2')refreshA2View();
+  if(id==='settings')loadSettings();
+  if(id==='admin')loadAdminProjectList();
+}
+
+document.addEventListener('click',function(e){
+  var g=e.target.closest('[data-go]');if(g){go(g.getAttribute('data-go'));return}
+  var t=e.target.closest('[data-toast]');if(t){toast(t.getAttribute('data-toast'));return}
+  var c=e.target.closest('[data-close]');if(c){$$('.mask').forEach(function(m){m.classList.remove('on')});return}
+});
+$$('.mask').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('on')})});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')$$('.mask').forEach(function(m){m.classList.remove('on')})});
+$('#btnSideToggle').onclick=function(){$('#sidebar').classList.toggle('open')};
+$('#btnAiToggle').onclick=function(){$('#aipanel').classList.toggle('open')};
+$('#aiClose').onclick=function(){$('#aipanel').classList.remove('open')};
+
+/* ==================== AI 面板标签 ==================== */
+function switchTab(name){
+  $$('#aiTabs button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')===name)});
+  $('#aiBodyChat').style.display=name==='chat'?'flex':'none';
+  $('#aiBodySrc').style.display=name==='src'?'flex':'none';
+  $('#aiBodyVer').style.display=name==='ver'?'flex':'none';
+  $('#aiBodyDetail').style.display=name==='detail'?'flex':'none';
+  $('#aiChips').style.display=name==='chat'?'flex':'none';
+  $('.ai-compose').style.display=name==='chat'?'block':'none';
+  if(name==='ver')renderVersions();
+}
+$$('#aiTabs button').forEach(function(b){b.onclick=function(){switchTab(b.getAttribute('data-tab'))}});
+function renderVersions(){
+  $('#verList').innerHTML=PROJECT.versions.map(function(v){
+    return'<div class="ver-line'+(v.cur?'':' old')+'"><b>'+v.t+'</b><p>'+v.d+'</p></div>'}).join('')||
+    '<p style="color:var(--subtle)">暂无版本记录</p>';
+}
+
+$$('#aiChips button').forEach(function(b){
+  b.onclick=function(){$('#aiInput').value=b.textContent+'；请保留原正式版本，并列出受影响成果。';
+    $('#aiInput').focus()}});
+
+/* A4 聊天 - 真实 Dify Chatflow 调用 */
+var aiSending=false;
+$('#aiSend').onclick=async function(){
+  if(aiSending)return;
+  var v=$('#aiInput').value.trim();if(!v){toast('请先输入修改要求');return}
+  var box=$('#aiBodyChat');
+  box.insertAdjacentHTML('beforeend','<div class="ai-msg me">'+esc(v)+'</div>');
+  $('#aiInput').value='';box.scrollTop=box.scrollHeight;
+  aiSending=true;
+
+  // 构建上下文
+  var ctx={project_info:JSON.stringify(PROJECT.info),sop_outline:PROJECT.a1.content||'',
+    task_table:PROJECT.a2.content||'',assets:PROJECT.a3.content||''};
+
+  // 添加"正在输入"提示
+  var thinking=document.createElement('div');thinking.className='ai-msg';
+  thinking.innerHTML='<span class="spinner spinner-sm"></span> 正在分析…';
+  box.appendChild(thinking);box.scrollTop=box.scrollHeight;
+
+  try{
+    var result=await callDifyChatflowStream('A4',v,ctx,PROJECT.a4.conversationId,
+      function(answer){thinking.innerHTML=renderMd(answer);box.scrollTop=box.scrollHeight});
+    if(result.conversation_id)PROJECT.a4.conversationId=result.conversation_id;
+    PROJECT.a4.lastPreview=result.answer;
+    // 渲染到 A4 预览页
+    $('#a4DocBody').innerHTML=renderMd(result.answer);
+    addFeed('AI','ai','AI 修改助手返回分析结果');
+  }catch(ex){
+    thinking.innerHTML='<span style="color:var(--red)">调用失败：'+esc(ex.message)+'</span>';
+    if(ex.message.indexOf('API Key')>=0||ex.message.indexOf('配置')>=0){
+      thinking.innerHTML+='<br><span class="link" onclick="go(\'admin\')">前往管理后台配置 →</span>';
+    }
+  }
+  aiSending=false;box.scrollTop=box.scrollHeight;
+};
+$('#aiInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('#aiSend').click()}});
+
+$('#btnA4Cancel').onclick=function(){toast('已取消修改');go('a2')};
+$('#btnA4Write').onclick=function(){
+  if(PROJECT.a4.lastPreview){
+    PROJECT.versions.unshift({t:'草稿 · AI 修改 · '+new Date().toLocaleTimeString(),
+      d:'通过 A4 修改助手生成的修改草稿',cur:true});
+    addFeed('AI','ai','AI 修改已写入草稿');toast('修改已写入草稿');
+  }else{toast('暂无修改内容')}
+};
+
+/* ==================== 首页 ==================== */
+$('#btnContinue').onclick=function(){$('#mContinue').classList.add('on')};
+$('#btnVerify').onclick=function(){
+  var c=$('#inCode').value.trim();if(!c){toast('请输入项目编号');return}
+  $('#mContinue').classList.remove('on');toast('已进入项目');go('overview')};
+
+/* ==================== 文件上传处理 ==================== */
+$$('.up input[type=file]').forEach(function(inp){
+  inp.onchange=function(e){
+    var f=e.target.files[0];if(!f)return;
+    var up=inp.closest('.up');
+    up.classList.add('done');
+    up.querySelector('.ui').textContent='✓';
+    up.querySelector('.fn2').textContent=f.name;
+    up.querySelector('.fn2').style.color='';
+    toast('已选择文件：'+f.name);
+  }
+});
+
+/* ==================== 创建项目 + A1 生成 ==================== */
+$('#btnCreate').onclick=async function(){
+  var name=$('#fName').value.trim();
+  if(!name){toast('请填写活动名称');return}
+  // 保存项目信息
+  PROJECT.info={
+    name:name, type:$('#fType').value, bg:$('#fBg').value.trim(),
+    date:$('#fDate').value, target:$('#fTarget').value.trim(),
+    budget:$('#fBudget').value.trim(), dept:$('#fDept').value.trim(),
+    goal:$('#fBg').value.trim()
+  };
+  PROJECT.id='ACT-'+$('#fDate').value.replace(/-/g,'')+'-001';
+  $('#sideTitle').textContent=name;$('#sideCode').textContent=PROJECT.id;
+
+  // 保存到后端数据库
+  try{var createRes=await fetch(API_BASE+'/api/projects',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:name,activity_type:PROJECT.info.type,department:PROJECT.info.dept,
+      date:PROJECT.info.date,target:PROJECT.info.target,budget:PROJECT.info.budget,
+      background:PROJECT.info.bg})});
+    if(createRes.ok){var cd=await createRes.json();PROJECT.dbId=cd.id;
+      PROJECT.id='ACT-'+$('#fDate').value.replace(/-/g,'')+'-'+String(cd.id).padStart(3,'0');
+      $('#sideCode').textContent=PROJECT.id}
+  }catch(e){}
+
+  // 进入生成中页面
+  go('generating');
+  $('#genIcon').textContent='⟳';$('#genIcon').style.background='var(--blue-soft)';$('#genIcon').style.color='var(--blue-ink)';
+  $('#genPill').textContent='生成中';$('#genPill').className='pill pill-blue';
+  $('#genTitle').textContent='正在生成 SOP 大纲';
+  $('#genDesc').textContent='正在调用 Dify A1 工作流…';
+  $('#genBar').style.width='20%';$('#genError').style.display='none';
+  $('#btnGenDone').style.display='none';
+
+  try{
+    // 构建输入
+    var inputs={
+      activity_name:PROJECT.info.name,
+      activity_type:PROJECT.info.type,
+      background:PROJECT.info.bg,
+      date:PROJECT.info.date,
+      target:PROJECT.info.target,
+      budget:PROJECT.info.budget,
+      department:PROJECT.info.dept
+    };
+
+    $('#genBar').style.width='40%';$('#genDesc').textContent='工作流运行中，请稍候…';
+
+    var result=await callDifyWorkflowStream('A1',inputs,function(d){
+      if(d.event==='node_started'&&d.data){$('#genDesc').textContent='节点：'+(d.data.title||'处理中')+'…'}
+      if(d.event==='node_finished'){$('#genBar').style.width='70%'}
+    });
+
+    // 提取输出
+    var output=extractOutput(result?result.outputs||result:null);
+    if(!output&&result)output=extractOutput(result);
+
+    PROJECT.a1.content=output;
+    PROJECT.a1.status='draft';
+    addFeed('AI','ai','SOP 大纲生成完成');
+    PROJECT.versions.unshift({t:'A1 草稿 V1.0 · '+new Date().toLocaleTimeString(),
+      d:'由 Dify A1 工作流基于项目输入生成',cur:true});
+
+    $('#genBar').style.width='100%';
+    $('#genIcon').textContent='✓';$('#genIcon').style.background='var(--green-soft)';$('#genIcon').style.color='var(--green)';
+    $('#genPill').textContent='生成完成';$('#genPill').className='pill pill-green';
+    $('#genTitle').textContent='SOP 大纲已生成';
+    $('#genDesc').textContent='请查看并确认大纲内容';
+    $('#btnGenDone').style.display='';
+    saveTime();
+
+  }catch(ex){
+    $('#genBar').style.width='100%';
+    $('#genIcon').textContent='×';$('#genIcon').style.background='var(--red-soft)';$('#genIcon').style.color='var(--red)';
+    $('#genPill').textContent='生成失败';$('#genPill').className='pill pill-red';
+    $('#genTitle').textContent='生成失败';
+    $('#genDesc').textContent='';
+    $('#genError').style.display='block';
+    $('#genError').innerHTML='<b>错误信息</b>'+esc(ex.message);
+    if(ex.message.indexOf('API Key')>=0||ex.message.indexOf('配置')>=0){
+      $('#genError').innerHTML+='<br><br><button class="btn btn-sm" onclick="go(\'admin\')">前往管理后台配置 API Key →</button>';
+    }
+    $('#btnGenDone').style.display='';$('#btnGenDone').textContent='返回';
+  }
+};
+$('#btnGenDone').onclick=function(){
+  if(PROJECT.a1.status==='draft'||PROJECT.a1.content){go('a1')}
+  else{go('create')}
+};
+
+/* ==================== A1 大纲 ==================== */
+function refreshA1(){
+  if(PROJECT.a1.content){
+    $('#a1Hold').style.display='none';$('#a1Content').style.display='';
+    $('#a1DocBody').innerHTML=renderMd(PROJECT.a1.content);
+    if(PROJECT.a1.confirmed){
+      $('#a1Badge').textContent='✓ 已确认';$('#a1Badge').className='pill pill-green';
+      $('#a1Ver').textContent='正式版本 V1.0';
+      $('#a1Gate').innerHTML='<p>大纲已确认。下一阶段可基于此生成执行主表。</p>'+
+        '<button class="btn btn-primary" data-go="a2">进入执行主表 →</button>';
+    }else{
+      $('#a1Badge').textContent='草稿';$('#a1Badge').className='pill pill-amber';
+      $('#a1Ver').textContent='草稿 V1.0';
+    }
+  }else{
+    $('#a1Hold').style.display='';$('#a1Content').style.display='none';
+  }
+}
+
+$('#btnConfirmA1').onclick=function(){
+  if(!PROJECT.a1.content){toast('请先生成大纲');return}
+  PROJECT.a1.confirmed=true;PROJECT.a1.status='confirmed';
+  $('#navA1').textContent='已确认';$('#navA1').className='sv ok';
+  $$('#stageNav .stage-item')[1].classList.add('done');
+  PROJECT.versions.unshift({t:'A1 正式 V1.0 · '+new Date().toLocaleTimeString(),
+    d:'SOP 大纲经人工确认',cur:true});
+  addFeed('✓','ok','SOP 大纲已确认');
+  toast('大纲已确认为正式版本');
+  refreshA1();saveTime();
+};
+
+$('#btnRegenA1').onclick=async function(){
+  if(!CONFIG.keys.A1){toast('请先在管理后台配置 A1 的 API Key');go('admin');return}
+  toast('正在重新生成 SOP 大纲…');
+  go('generating');
+  $('#genTitle').textContent='正在重新生成 SOP 大纲';
+  $('#genDesc').textContent='调用 Dify A1 工作流…';
+  $('#genBar').style.width='30%';$('#genError').style.display='none';$('#btnGenDone').style.display='none';
+  $('#genIcon').textContent='⟳';$('#genIcon').style.background='var(--blue-soft)';$('#genIcon').style.color='var(--blue-ink)';
+  $('#genPill').textContent='生成中';$('#genPill').className='pill pill-blue';
+  try{
+    var inputs={activity_name:PROJECT.info.name,activity_type:PROJECT.info.type,
+      background:PROJECT.info.bg,date:PROJECT.info.date,target:PROJECT.info.target,
+      budget:PROJECT.info.budget,department:PROJECT.info.dept};
+    var result=await callDifyWorkflowStream('A1',inputs,function(d){
+      if(d.event==='node_started'&&d.data)$('#genDesc').textContent='节点：'+(d.data.title||'处理中')+'…';
+    });
+    PROJECT.a1.content=extractOutput(result?result.outputs||result:null);
+    PROJECT.a1.status='draft';PROJECT.a1.confirmed=false;
+    $('#genBar').style.width='100%';$('#genIcon').textContent='✓';
+    $('#genIcon').style.background='var(--green-soft)';$('#genIcon').style.color='var(--green)';
+    $('#genPill').textContent='完成';$('#genPill').className='pill pill-green';
+    $('#genTitle').textContent='SOP 大纲已重新生成';$('#genDesc').textContent='';
+    $('#btnGenDone').style.display='';$('#btnGenDone').textContent='查看生成结果';
+    addFeed('AI','ai','SOP 大纲重新生成完成');
+  }catch(ex){
+    $('#genIcon').textContent='×';$('#genIcon').style.background='var(--red-soft)';$('#genIcon').style.color='var(--red)';
+    $('#genPill').textContent='失败';$('#genPill').className='pill pill-red';
+    $('#genTitle').textContent='重新生成失败';$('#genDesc').textContent='';
+    $('#genError').style.display='block';$('#genError').innerHTML='<b>错误</b>'+esc(ex.message);
+    $('#btnGenDone').style.display='';$('#btnGenDone').textContent='返回';
+  }
+};
+
+$('#btnDownloadA1').onclick=function(){
+  if(!PROJECT.a1.content){toast('暂无内容可下载');return}
+  var blob=new Blob([PROJECT.a1.content],{type:'text/markdown;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='SOP大纲_'+PROJECT.info.name+'.md';a.click();URL.revokeObjectURL(a.href);
+};
+
+/* ==================== A2 执行主表 ==================== */
+$('#btnGenA2').onclick=async function(){
+  if(!PROJECT.a1.confirmed){toast('请先确认 A1 SOP 大纲');go('a1');return}
+  if(!CONFIG.keys.A2){toast('请先在管理后台配置 A2 的 API Key');go('admin');return}
+  toast('正在生成执行主表…');
+  $('#a2Hold').innerHTML='<div style="text-align:center;padding:40px"><span class="spinner"></span><br><br>正在调用 Dify A2 工作流生成执行主表…</div>';
+  try{
+    var inputs={sop_outline:PROJECT.a1.content,project_info:JSON.stringify(PROJECT.info)};
+    var result=await callDifyWorkflow('A2',inputs);
+    var output=extractOutput(result.data||result);
+    PROJECT.a2.content=output;PROJECT.a2.status='draft';
+    $('#a2Hold').style.display='none';$('#a2Content').style.display='';
+    // 尝试解析 JSON 任务列表
+    tryParseTaskTable(output);
+    $('#a2Badge').textContent='待确认';$('#a2Badge').className='pill pill-amber';
+    $('#navA2').textContent='待确认';$('#navA2').className='sv warn';
+    addFeed('AI','ai','执行主表生成完成');saveTime();
+    toast('执行主表已生成，请确认内容');
+  }catch(ex){
+    $('#a2Hold').innerHTML='<div style="padding:30px;text-align:center"><div class="note note-red"><b>生成失败</b>'+esc(ex.message)+'</div></div>';
+    toast('执行主表生成失败');
+  }
+};
+
+function tryParseTaskTable(output){
+  // 尝试 JSON 解析
+  try{
+    var json=JSON.parse(output);
+    if(Array.isArray(json)){PROJECT.a2.tasks=json;renderTaskTable(json);return}
+    if(json.tasks&&Array.isArray(json.tasks)){PROJECT.a2.tasks=json.tasks;renderTaskTable(json.tasks);return}
+  }catch(e){}
+  // 如果不是 JSON，作为 Markdown 渲染
+  $('#a2MdContent').innerHTML=renderMd(output);$('#a2MdContent').style.display='';
+  $('#fullTbl').style.display='none';
+  $('#taskTotal').textContent='—';
+  $('#a2Stat').textContent='内容以文档格式展示（Dify 输出非 JSON 格式）';
+}
+
+function renderTaskTable(tasks){
+  if(!tasks||!tasks.length){$('#a2MdContent').innerHTML='<p>无任务数据</p>';return}
+  $('#a2MdContent').style.display='none';$('#fullTbl').style.display='';
+  var tbody=$('#fullTbl').querySelector('tbody');
+  tbody.innerHTML=tasks.map(function(t,i){
+    return'<tr>'+
+      '<td class="wbs">'+(t.wbs||t.WBS||t.w||(i+1))+'</td>'+
+      '<td>'+(t.stage||t.s||t['阶段']||'')+'</td>'+
+      '<td class="tname">'+(t.name||t.n||t['任务事项']||t['任务']||'')+'</td>'+
+      '<td>'+(t.action||t.a||t['具体动作']||'')+'</td>'+
+      '<td>'+(t.deliverable||t.d||t['交付物']||'')+'</td>'+
+      '<td>'+(t.owner||t.o||t['负责人']||'')+'</td>'+
+      '<td>'+(t.collaborator||t.co||t['协作方']||'')+'</td>'+
+      '<td class="num">'+(t.deadline||t.dt||t['截止时间']||'')+'</td>'+
+      '<td class="num">'+(t.budget||t.b||t['预算']||'')+'</td>'+
+      '<td class="cmuted">'+(t.dependency||t.dep||t['前置依赖']||'')+'</td>'+
+      '<td>'+(t.acceptance||t.ac||t['验收标准']||'')+'</td>'+
+      '<td>'+(t.status||t.st||t['状态']||'')+'</td>'+
+      '<td class="cmuted">'+(t.remark||t.rm||t['备注']||'')+'</td></tr>'
+  }).join('');
+  $('#taskTotal').textContent=tasks.length;
+  $('#a2Stat').textContent='共 '+tasks.length+' 项任务';
+}
+
+function refreshA2View(){
+  if(PROJECT.a2.content){
+    $('#a2Hold').style.display='none';$('#a2Content').style.display='';
+    if(PROJECT.a2.confirmed){
+      $('#a2Badge').textContent='✓ 已确认';$('#a2Badge').className='pill pill-green';
+      $('#a2Gate').innerHTML='<div class="note note-green note-row"><div class="nc"><b>✓ 执行主表已确认</b>'+
+        '后续修改将创建新草稿，不覆盖正式版。</div>'+
+        '<button class="btn btn-primary" data-go="a3">前往生成配套成果 →</button></div>';
+    }
+  }else{
+    $('#a2Hold').style.display='';$('#a2Content').style.display='none';
+  }
+}
+
+$('#btnConfirmA2').onclick=function(){
+  if(!PROJECT.a2.content){toast('请先生成执行主表');return}
+  PROJECT.a2.confirmed=true;PROJECT.a2.status='confirmed';
+  $('#a2Badge').textContent='✓ 已确认';$('#a2Badge').className='pill pill-green';
+  $('#navA2').textContent='已确认';$('#navA2').className='sv ok';
+  $$('#stageNav .stage-item')[2].classList.add('done');
+  $('#a3Badge').textContent='可生成';$('#a3Badge').className='pill pill-green';
+  $('#a3Gate').style.display='none';
+  PROJECT.versions.unshift({t:'A2 正式 V1.0 · '+new Date().toLocaleTimeString(),
+    d:'执行主表经人工确认',cur:true});
+  addFeed('✓','ok','执行主表已确认');
+  toast('执行主表已确认');saveTime();
+  refreshA2View();
+};
+
+/* A2 筛选/视图 */
+var fullMode=false,curStage='all',pendOnlyFlag=false;
+$('#btnViewToggle').onclick=function(){
+  fullMode=!fullMode;
+  $('#a2Tool').style.display=fullMode?'flex':'none';
+  $('#btnViewToggle').textContent=fullMode?'精简视图':'完整视图';
+};
+$('#btnFilter').onclick=function(){fullMode=true;$('#a2Tool').style.display='flex';$('#btnViewToggle').textContent='精简视图'};
+
+$('#btnExportCsv').onclick=function(){
+  if(!PROJECT.a2.content){toast('暂无内容可导出');return}
+  var blob=new Blob([PROJECT.a2.content],{type:'text/plain;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='执行主表_'+PROJECT.info.name+'.txt';a.click();URL.revokeObjectURL(a.href);
+  toast('已导出');
+};
+$('#btnCopyTable').onclick=function(){
+  if(!PROJECT.a2.content){toast('暂无内容');return}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(PROJECT.a2.content).then(function(){toast('已复制到剪贴板')},
+    function(){toast('复制失败')})
+  }else toast('浏览器不支持复制')};
+
+/* ==================== A3 配套成果 ==================== */
+$('#btnGenAssets').onclick=async function(){
+  if(!PROJECT.a2.confirmed){toast('请先确认 A2 执行主表');go('a2');return}
+  if(!CONFIG.keys.A3){toast('请先在管理后台配置 A3 的 API Key');go('admin');return}
+  toast('正在生成配套成果…');
+  $('#a3Content').style.display='';
+  $('#a3DocBody').innerHTML='<div style="text-align:center;padding:30px"><span class="spinner"></span><br><br>正在调用 Dify A3 工作流…</div>';
+  try{
+    var inputs={task_table:PROJECT.a2.content,project_info:JSON.stringify(PROJECT.info),
+      asset_type:'all'};
+    var result=await callDifyWorkflow('A3',inputs);
+    var output=extractOutput(result.data||result);
+    PROJECT.a3.content=output;PROJECT.a3.generated=true;
+    $('#a3DocBody').innerHTML=renderMd(output);
+    $('#a3Badge').textContent='✓ 已生成';$('#a3Badge').className='pill pill-green';
+    $('#navA3').textContent='已生成';$('#navA3').className='sv ok';
+    addFeed('AI','ai','配套成果生成完成');saveTime();
+    toast('配套成果已生成');
+  }catch(ex){
+    $('#a3DocBody').innerHTML='<div class="note note-red"><b>生成失败</b>'+esc(ex.message)+'</div>';
+    toast('配套成果生成失败');
+  }
+};
+
+/* ==================== R1 复盘分析 ==================== */
+$('#r1FileInput').onchange=function(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();r.onload=function(){PROJECT.r1.uploadedData=r.result;
+    toast('已加载复盘资料：'+f.name)};
+  r.readAsText(f);
+};
+
+$('#btnRunR1').onclick=async function(){
+  if(!CONFIG.keys.R1){toast('请先在管理后台配置 R1 的 API Key');go('admin');return}
+  toast('正在调用 Dify R1 复盘工作流…');
+  $('#r1Hold').innerHTML='<div style="text-align:center;padding:40px"><span class="spinner"></span><br><br>正在分析…</div>';
+  try{
+    var inputs={event_data:PROJECT.r1.uploadedData||'无附加数据',
+      task_table:PROJECT.a2.content||'未生成',
+      project_info:JSON.stringify(PROJECT.info),
+      feedback_data:''};
+    var result=await callDifyWorkflow('R1',inputs);
+    var output=extractOutput(result.data||result);
+    PROJECT.r1.content=output;PROJECT.r1.status='done';
+    $('#r1Hold').style.display='none';$('#r1Out').style.display='';
+    $('#r1DocBody').innerHTML=renderMd(output);
+    $('#navR1').textContent='待确认';$('#navR1').className='sv warn';
+    addFeed('AI','ai','复盘分析完成');saveTime();
+    toast('复盘分析已完成');
+  }catch(ex){
+    $('#r1Hold').innerHTML='<div style="padding:30px;text-align:center"><div class="note note-red"><b>分析失败</b>'+esc(ex.message)+'</div></div>';
+    toast('复盘分析失败');
+  }
+};
+
+$('#btnConfirmR1').onclick=function(){
+  if(!PROJECT.r1.content){toast('请先运行复盘分析');return}
+  PROJECT.r1.confirmed=true;
+  $('#navR1').textContent='已确认';$('#navR1').className='sv ok';
+  $$('#stageNav .stage-item')[4].classList.add('done');
+  PROJECT.versions.unshift({t:'R1 已确认 · '+new Date().toLocaleTimeString(),
+    d:'复盘分析结论经人工确认',cur:true});
+  addFeed('✓','ok','R1 复盘结论已确认');
+  toast('结论已确认');saveTime();
+};
+
+/* ==================== R2 复盘报告 ==================== */
+$('#btnGenR2').onclick=async function(){
+  if(!PROJECT.r1.confirmed){toast('请先确认 R1 复盘结论');go('r1');return}
+  if(!CONFIG.keys.R2){toast('请先在管理后台配置 R2 的 API Key');go('admin');return}
+  toast('正在生成复盘报告…');
+  $('#r2Hold').innerHTML='<div style="text-align:center;padding:40px"><span class="spinner"></span><br><br>正在调用 Dify R2 工作流…</div>';
+  try{
+    var inputs={r1_analysis:PROJECT.r1.content,project_info:JSON.stringify(PROJECT.info)};
+    var result=await callDifyWorkflow('R2',inputs);
+    var output=extractOutput(result.data||result);
+    PROJECT.r2.content=output;PROJECT.r2.generated=true;
+    $('#r2Hold').style.display='none';$('#r2Out').style.display='';
+    $('#r2DocBody').innerHTML=renderMd(output);
+    $('#r2Badge').textContent='✓ 已生成';$('#r2Badge').className='pill pill-green';
+    $('#navR2').textContent='已生成';$('#navR2').className='sv ok';
+    $$('#stageNav .stage-item')[5].classList.add('done');
+    addFeed('AI','ai','复盘报告已生成');saveTime();
+    toast('复盘报告已生成');
+  }catch(ex){
+    $('#r2Hold').innerHTML='<div style="padding:30px;text-align:center"><div class="note note-red"><b>生成失败</b>'+esc(ex.message)+'</div></div>';
+    toast('复盘报告生成失败');
+  }
+};
+
+/* ==================== 总览页刷新 ==================== */
+function refreshOverview(){
+  $('#ovTitle').textContent=PROJECT.info.name||'未创建项目';
+  $('#ovDesc').textContent=PROJECT.info.bg||'';
+  $('#ovCode').textContent='· '+PROJECT.id;
+  // 信息卡
+  var info=PROJECT.info;
+  $('#ovInfo').innerHTML=[
+    kvi('活动时间',info.date||'—'),kvi('活动类型',info.type||'—'),
+    kvi('目标对象',info.target||'—'),kvi('预算上限',info.budget||'—'),
+    kvi('创建部门',info.dept||'—','full'),kvi('核心目标',info.goal||info.bg||'—','full')
+  ].join('');
+  // 阶段进度
+  var stage=1;
+  if(PROJECT.a1.confirmed)stage=2;
+  if(PROJECT.a2.confirmed)stage=3;
+  if(PROJECT.a3.generated)stage=3;
+  if(PROJECT.r1.confirmed)stage=4;
+  if(PROJECT.r2.generated)stage=5;
+  $('#ovRingN').textContent=stage+' / 5';
+  var offset=308-308*(stage/5);$('#ovRing').setAttribute('stroke-dashoffset',offset);
+  // 步进器
+  updateStepper(stage);
+  // 指标
+  $('#ovTaskN').textContent=PROJECT.a2.tasks?PROJECT.a2.tasks.length:'0';
+  renderFeed();
+}
+function kvi(k,v,cls){return'<div class="kvi'+(cls?' '+cls:'')+'"><small>'+k+'</small><b>'+v+'</b></div>'}
+function updateStepper(stage){
+  for(var i=1;i<=5;i++){
+    var el=$('#ovStp'+i);if(!el)continue;
+    el.className='stp';
+    if(i<stage){el.className='stp done';el.querySelector('.c').textContent='✓'}
+    else if(i===stage){el.className='stp cur'}
+  }
+}
+
+/* ==================== 设置页 ==================== */
+function loadSettings(){
+  $('#sName').value=PROJECT.info.name||'';$('#sType').value=PROJECT.info.type||'培训 / 工作坊';
+  $('#sDate').value=PROJECT.info.date||'';$('#sTarget').value=PROJECT.info.target||'';
+  $('#sBudget').value=PROJECT.info.budget||'';$('#sDept').value=PROJECT.info.dept||'';
+  $('#sGoal').value=PROJECT.info.goal||PROJECT.info.bg||'';
+}
+$('#btnSaveSettings').onclick=function(){
+  PROJECT.info.name=$('#sName').value;PROJECT.info.type=$('#sType').value;
+  PROJECT.info.date=$('#sDate').value;PROJECT.info.target=$('#sTarget').value;
+  PROJECT.info.budget=$('#sBudget').value;PROJECT.info.dept=$('#sDept').value;
+  PROJECT.info.goal=$('#sGoal').value;
+  $('#sideTitle').textContent=PROJECT.info.name;
+  toast('设置已保存');saveTime();
+};
+
+/* ==================== 项目数据导出/导入 ==================== */
+$('#btnExportProject').onclick=async function(){
+  try{var res=await fetch(API_BASE+'/api/export');
+    if(res.ok){var data=await res.json();
+      var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+      var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+      a.download='sop-platform-export.json';a.click();URL.revokeObjectURL(a.href);
+      toast('全量数据已导出')}
+    else throw new Error()
+  }catch(e){
+    var blob=new Blob([JSON.stringify(PROJECT,null,2)],{type:'application/json'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='project_'+PROJECT.id+'.json';a.click();URL.revokeObjectURL(a.href);
+    toast('项目数据已导出（本地）')}
+};
+$('#btnImportProject').onclick=function(){$('#hiddenImportProject').click()};
+$('#hiddenImportProject').onchange=function(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();r.onload=async function(){
+    try{
+      var res=await fetch(API_BASE+'/api/import',{method:'POST',
+        headers:{'Content-Type':'application/json'},body:r.result});
+      if(res.ok){var d=await res.json();
+        toast('已导入: 配置='+(d.imported.config?'是':'否')+', 项目='+d.imported.projects+'个');
+        loadAdminProjectList()}
+      else throw new Error()
+    }catch(ex){
+      try{var p=JSON.parse(r.result);Object.assign(PROJECT,p);
+        $('#sideTitle').textContent=PROJECT.info.name||'';$('#sideCode').textContent=PROJECT.id||'';
+        if(PROJECT.a1.confirmed){$('#navA1').textContent='已确认';$('#navA1').className='sv ok';$$('#stageNav .stage-item')[1].classList.add('done')}
+        if(PROJECT.a2.confirmed){$('#navA2').textContent='已确认';$('#navA2').className='sv ok';$$('#stageNav .stage-item')[2].classList.add('done')}
+        toast('项目数据已导入：'+PROJECT.info.name)}
+      catch(ex2){toast('导入失败：文件格式不正确')}}};
+  r.readAsText(f);e.target.value='';
+};
+
+/* ==================== 初始化 ==================== */
+loadConfig();
+go('landing');
+})();
+</script>
+</body>
+</html>

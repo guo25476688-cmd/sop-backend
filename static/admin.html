@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>管理后台 · AI 活动 SOP 智能运营平台</title>
+<style>
+:root{
+  --ink:#161d2b;--ink2:#2b3648;--muted:#69748a;--subtle:#93a0b4;
+  --line:#e7ebf2;--line2:#eef1f6;--bg:#f5f7fb;--paper:#fff;
+  --blue:#1668f0;--blue-d:#0f57d4;--blue-2:#3b86ff;
+  --blue-soft:#eaf2ff;--blue-line:#cfe0fb;--blue-ink:#1b5fcc;
+  --navy:#12305c;
+  --green:#12a05f;--green-soft:#e7f7ef;--green-ink:#0d7d4a;--green-line:#bfe9d4;
+  --amber:#d5860e;--amber-soft:#fef5e6;--amber-ink:#a5670c;--amber-line:#f3ddb4;
+  --red:#d94b4b;--red-soft:#fdeeee;--red-ink:#b03a3a;--red-line:#f6d4d4;
+  --purple:#7c5cf0;--orange:#f0872b;
+  --sh-1:0 1px 2px rgba(20,32,56,.04);
+  --sh-2:0 1px 3px rgba(20,32,56,.05),0 8px 22px rgba(23,40,74,.05);
+  --r-s:8px;--r-m:10px;--r-l:14px;--r-xl:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Inter","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);font-size:13px;line-height:1.65;
+  -webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#d3dae5;border-radius:99px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---- 顶栏 ---- */
+.topbar{position:fixed;top:0;left:0;right:0;height:58px;z-index:60;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 22px;gap:16px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-mark{width:34px;height:34px;border-radius:9px;flex:none;
+  background:linear-gradient(150deg,#1a6ef5,#0b52cf);color:#fff;
+  display:grid;place-items:center;font-weight:800;font-size:15px;
+  box-shadow:0 6px 16px rgba(22,104,240,.28)}
+.brand b{font-size:14.5px;font-weight:750;letter-spacing:-.01em}
+.brand span{font-size:11.5px;color:var(--subtle);margin-left:4px}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
+
+/* ---- 侧栏 ---- */
+.sidebar{position:fixed;top:58px;left:0;bottom:0;width:220px;background:#fff;
+  border-right:1px solid var(--line);padding:14px 10px;overflow:auto;z-index:40}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:var(--r-m);
+  cursor:pointer;font-size:13px;font-weight:600;color:var(--ink2);transition:.15s;border:1px solid transparent}
+.nav-item:hover{background:#f6f9fd}
+.nav-item.on{background:#fff;border-color:var(--blue);color:var(--blue-ink);
+  box-shadow:0 0 0 3px rgba(22,104,240,.08);font-weight:700}
+.nav-item .ni{width:28px;height:28px;border-radius:8px;flex:none;display:grid;place-items:center;
+  font-size:13px;background:#f1f4f9;color:#8994a8}
+.nav-item.on .ni{background:var(--blue-soft);color:var(--blue-ink)}
+.nav-lb{padding:16px 11px 7px;font-size:11px;color:var(--subtle);font-weight:700;letter-spacing:.04em}
+
+/* ---- 主内容 ---- */
+.shell{padding:58px 0 0 220px;min-height:100vh}
+.main{padding:22px 26px 60px;max-width:1400px}
+.page{display:none}
+.page.on{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ---- 按钮 ---- */
+.btn{height:35px;padding:0 15px;border-radius:var(--r-m);border:1px solid var(--line);
+  background:#fff;color:var(--ink2);font-size:13px;font-weight:650;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;transition:.16s}
+.btn:hover{border-color:#c9d5e6;background:#fbfcfe}
+.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 5px 14px rgba(22,104,240,.22)}
+.btn-primary:hover{background:var(--blue-d)}
+.btn-sm{height:30px;padding:0 11px;font-size:12px;border-radius:var(--r-s)}
+.btn-danger{border-color:var(--red);color:var(--red)}
+.btn-danger:hover{background:var(--red-soft)}
+
+/* ---- 标签 ---- */
+.pill{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;
+  border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap;background:#f1f4f9;color:#66738a}
+.pill-blue{background:var(--blue-soft);color:var(--blue-ink)}
+.pill-green{background:var(--green-soft);color:var(--green-ink)}
+.pill-amber{background:var(--amber-soft);color:var(--amber-ink)}
+.pill-red{background:var(--red-soft);color:var(--red-ink)}
+.pill-purple{background:#f2eeff;color:#5b3fd0}
+
+/* ---- 卡片 ---- */
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sh-1)}
+.card-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:16px 18px 0}
+.card-hd.bd{padding-bottom:14px;border-bottom:1px solid var(--line2)}
+.card-hd h3{margin:0;font-size:15px;font-weight:750;letter-spacing:-.01em}
+.card-hd p{margin:4px 0 0;font-size:12px;color:var(--muted)}
+.card-bd{padding:16px 18px}
+.card-ft{padding:13px 18px;border-top:1px solid var(--line2);display:flex;align-items:center;justify-content:space-between;gap:12px}
+
+/* ---- 指标卡 ---- */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:16px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:var(--r-l);padding:16px 18px;box-shadow:var(--sh-1)}
+.metric .lb{font-size:12px;color:var(--muted);font-weight:600}
+.metric .vl{font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.2;margin-top:6px}
+.metric small{display:block;margin-top:4px;font-size:11px;color:var(--subtle)}
+.metric .icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:16px;float:right}
+.metric .icon.blue{background:var(--blue-soft);color:var(--blue-ink)}
+.metric .icon.green{background:var(--green-soft);color:var(--green)}
+.metric .icon.amber{background:var(--amber-soft);color:var(--amber)}
+.metric .icon.purple{background:#f2eeff;color:var(--purple)}
+
+/* ---- 表格 ---- */
+table.tbl{width:100%;border-collapse:collapse}
+table.tbl th{text-align:left;font-size:11.5px;font-weight:700;color:var(--muted);
+  padding:10px 12px;background:#f8fafd;border-bottom:1px solid var(--line);white-space:nowrap}
+table.tbl td{padding:12px;font-size:12.5px;border-bottom:1px solid var(--line2);vertical-align:middle;line-height:1.6}
+table.tbl tr:last-child td{border-bottom:0}
+table.tbl tbody tr:hover td{background:#fafcff}
+.tbl-wrap{overflow:auto}
+
+/* ---- 表单 ---- */
+.fld{display:block;margin-bottom:14px}
+.fld span{display:block;font-size:12px;color:var(--ink2);font-weight:650;margin-bottom:6px}
+.fld span i{font-style:normal;color:var(--red);margin-left:2px}
+.fld input,.fld select,.fld textarea{width:100%;height:38px;border:1px solid var(--line);
+  border-radius:var(--r-m);background:#fbfcfe;padding:0 12px;font-size:13px;outline:0;transition:.15s}
+.fld textarea{height:74px;padding:10px 12px;resize:vertical;line-height:1.65}
+.fld input:focus,.fld textarea:focus{border-color:var(--blue-line);background:#fff;
+  box-shadow:0 0 0 3px rgba(22,104,240,.1)}
+.fld .hint{font-size:11px;color:var(--subtle);margin-top:4px}
+.fld input.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;letter-spacing:.02em}
+
+/* ---- API 状态 ---- */
+.api-row{display:grid;grid-template-columns:56px 1fr 160px 90px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line2)}
+.api-row:last-child{border:0}
+.api-id{font-weight:800;font-size:13px;color:var(--blue-ink)}
+.api-type{font-size:11.5px;color:var(--muted)}
+.api-status{font-size:11.5px;font-weight:700;color:var(--subtle)}
+.api-status.ok{color:var(--green)}
+.api-status.err{color:var(--red)}
+
+/* ---- 提示条 ---- */
+.note{border-radius:var(--r-m);padding:12px 14px;font-size:12.5px;line-height:1.7}
+.note b{display:block;font-size:13px;margin-bottom:3px}
+.note-blue{background:var(--blue-soft);border:1px solid var(--blue-line);color:var(--blue-ink)}
+.note-green{background:var(--green-soft);border:1px solid var(--green-line);color:var(--green-ink)}
+.note-amber{background:var(--amber-soft);border:1px solid var(--amber-line);color:var(--amber-ink)}
+.note-red{background:var(--red-soft);border:1px solid var(--red-line);color:var(--red-ink)}
+
+/* ---- 页头 ---- */
+.phead{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px}
+.phead h1{margin:0 0 6px;font-size:24px;font-weight:780;letter-spacing:-.03em;line-height:1.25}
+.phead p{margin:0;font-size:13px;color:var(--muted)}
+.phead-act{display:flex;align-items:center;gap:9px;flex:none}
+
+/* ---- Spinner ---- */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--blue);
+  border-radius:50%;animation:spin .6s linear infinite}
+.spinner-sm{width:14px;height:14px;border-width:1.5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---- Toast ---- */
+.toast{position:fixed;left:50%;bottom:34px;transform:translate(-50%,16px);z-index:200;
+  background:#16233c;color:#fff;border-radius:11px;padding:11px 16px;font-size:12.5px;
+  box-shadow:0 18px 48px rgba(16,32,62,.16);opacity:0;pointer-events:none;transition:.24s;max-width:420px}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---- 日志时间线 ---- */
+.log-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.log-item:last-child{border:0}
+.log-icon{width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;
+  font-size:12px;font-weight:800;background:#f1f4f9;color:#8994a8}
+.log-icon.config{background:var(--amber-soft);color:var(--amber)}
+.log-icon.project{background:var(--blue-soft);color:var(--blue-ink)}
+.log-icon.dify{background:var(--green-soft);color:var(--green)}
+.log-icon.system{background:#f2eeff;color:var(--purple)}
+.log-body b{font-size:12.5px;font-weight:700;display:block}
+.log-body small{font-size:11px;color:var(--subtle)}
+
+/* ---- 图表占位 ---- */
+.chart-bar{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:10px}
+.chart-bar .bar{flex:1;background:var(--blue);border-radius:4px 4px 0 0;min-height:4px;transition:.3s;position:relative}
+.chart-bar .bar:hover{background:var(--blue-d)}
+.chart-bar .bar .bar-label{position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  font-size:10px;font-weight:700;color:var(--ink2);white-space:nowrap}
+.chart-bar .bar .bar-date{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);
+  font-size:10px;color:var(--subtle);white-space:nowrap}
+
+/* ---- 两栏网格 ---- */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+/* ---- 响应式 ---- */
+@media(max-width:1100px){.metrics{grid-template-columns:repeat(2,1fr)}.grid-2,.grid-3{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .sidebar{display:none}.shell{padding-left:0}
+  .metrics{grid-template-columns:1fr}
+  .api-row{grid-template-columns:1fr;gap:4px}
+}
+</style>
+</head>
+<body>
+
+<!-- 顶栏 -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">S</div>
+    <div><b>AI SOP 平台</b><span>管理后台</span></div>
+  </div>
+  <div class="top-right">
+    <a href="/" class="btn btn-sm" style="gap:5px">← 返回前台</a>
+    <button class="btn btn-sm" id="btnRefreshAll">刷新数据</button>
+  </div>
+</header>
+
+<!-- 侧栏导航 -->
+<nav class="sidebar">
+  <div class="nav-lb">概览</div>
+  <div class="nav-item on" data-page="dashboard"><div class="ni">📊</div>数据看板</div>
+  <div class="nav-lb">管理</div>
+  <div class="nav-item" data-page="projects"><div class="ni">📁</div>项目管理</div>
+  <div class="nav-item" data-page="config"><div class="ni">🔑</div>API 配置</div>
+  <div class="nav-lb">记录</div>
+  <div class="nav-item" data-page="dify-calls"><div class="ni">🤖</div>Dify 调用记录</div>
+  <div class="nav-item" data-page="logs"><div class="ni">📋</div>操作日志</div>
+  <div class="nav-lb">工具</div>
+  <div class="nav-item" data-page="field-ref"><div class="ni">📖</div>字段参考</div>
+  <div class="nav-item" data-page="export"><div class="ni">📦</div>导出/导入</div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="shell">
+<div class="main">
+
+<!-- ═══════════════════ 数据看板 ═══════════════════ -->
+<section class="page on" id="p-dashboard">
+  <div class="phead">
+    <div><h1>数据看板</h1><p>平台整体运行状况一览</p></div>
+    <div class="phead-act"><span class="pill pill-blue" id="dashTime">加载中…</span></div>
+  </div>
+
+  <div class="metrics" id="dashMetrics">
+    <div class="metric"><div class="icon blue">📁</div><div class="lb">项目总数</div>
+      <div class="vl" id="mProjects">-</div><small id="mProjectsSub">加载中</small></div>
+    <div class="metric"><div class="icon green">🤖</div><div class="lb">Dify 调用次数</div>
+      <div class="vl" id="mCalls">-</div><small id="mCallsSub">加载中</small></div>
+    <div class="metric"><div class="icon amber">⏱</div><div class="lb">平均响应时间</div>
+      <div class="vl" id="mAvgTime">-</div><small>成功调用的平均耗时</small></div>
+    <div class="metric"><div class="icon purple">✓</div><div class="lb">成功率</div>
+      <div class="vl" id="mSuccessRate">-</div><small id="mSuccessSub">加载中</small></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd bd"><div><h3>近 7 天 Dify 调用趋势</h3><p>每日调用次数</p></div></div>
+      <div class="card-bd" style="padding-bottom:30px">
+        <div class="chart-bar" id="chartCalls"><span style="color:var(--subtle);font-size:12px">加载中…</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd bd"><div><h3>各应用调用分布</h3><p>按 Dify 应用统计调用次数</p></div></div>
+      <div class="card-bd">
+        <div id="chartApps"><span style="color:var(--subtle);font-size:12px">加载中…</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-hd bd"><div><h3>项目状态分布</h3><p>各状态项目数量</p></div></div>
+    <div class="card-bd" id="chartProjectStatus"><span style="color:var(--subtle);font-size:12px">加载中…</span></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ 项目管理 ═══════════════════ -->
+<section class="page" id="p-projects">
+  <div class="phead">
+    <div><h1>项目管理</h1><p>查看和管理所有已创建的活动项目</p></div>
+    <div class="phead-act">
+      <input type="text" id="projSearch" placeholder="搜索项目名称…" style="height:35px;width:220px;border:1px solid var(--line);border-radius:var(--r-m);padding:0 12px;font-size:13px;outline:0">
+      <button class="btn" id="btnProjSearch">搜索</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr>
+          <th style="width:50px">ID</th><th>活动名称</th><th>类型</th><th>部门</th>
+          <th>日期</th><th>状态</th><th>更新时间</th><th style="width:120px">操作</th>
+        </tr></thead>
+        <tbody id="projTableBody">
+          <tr><td colspan="8" style="text-align:center;color:var(--subtle);padding:40px">加载中…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-ft">
+      <span id="projPageInfo" style="font-size:12px;color:var(--muted)"></span>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm" id="btnProjPrev">上一页</button>
+        <button class="btn btn-sm" id="btnProjNext">下一页</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ API 配置 ═══════════════════ -->
+<section class="page" id="p-config">
+  <div class="phead">
+    <div><h1>API 配置</h1><p>管理 Dify 平台连接与各应用 API Key</p></div>
+    <div class="phead-act">
+      <button class="btn btn-primary" id="btnTestAllAdmin">全部测试连接</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-hd bd"><div><h3>🔑 Dify 平台连接</h3><p>配置你的公司 Dify 实例地址和各应用密钥</p></div></div>
+    <div class="card-bd">
+      <label class="fld">
+        <span>Dify 平台地址<i>*</i></span>
+        <input id="cfgBaseUrl" class="mono" placeholder="例如：https://dify.yourcompany.com/v1" />
+        <div class="hint">填写公司 Dify 实例的 API 地址，通常以 /v1 结尾。Dify 调用通过后端代理转发，无需担心跨域问题。</div>
+      </label>
+
+      <div style="margin-top:12px">
+        <div class="api-row" style="border-bottom:1px solid var(--line);padding-bottom:8px;font-weight:700;font-size:11.5px;color:var(--muted)">
+          <span>编号</span><span>API Key（每个 Dify 应用独立的密钥）</span><span>应用类型</span><span>状态</span>
+        </div>
+        <div class="api-row"><span class="api-id">A1</span>
+          <input id="cfgKeyA1" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" style="height:34px;border:1px solid var(--line);border-radius:var(--r-s);padding:0 10px;font-size:12px;outline:0;font-family:monospace" />
+          <span class="api-type">Workflow · SOP大纲</span>
+          <span class="api-status" id="stA1">未测试</span></div>
+        <div class="api-row"><span class="api-id">A2</span>
+          <input id="cfgKeyA2" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" style="height:34px;border:1px solid var(--line);border-radius:var(--r-s);padding:0 10px;font-size:12px;outline:0;font-family:monospace" />
+          <span class="api-type">Workflow · 执行主表</span>
+          <span class="api-status" id="stA2">未测试</span></div>
+        <div class="api-row"><span class="api-id">A3</span>
+          <input id="cfgKeyA3" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" style="height:34px;border:1px solid var(--line);border-radius:var(--r-s);padding:0 10px;font-size:12px;outline:0;font-family:monospace" />
+          <span class="api-type">Workflow · 配套成果</span>
+          <span class="api-status" id="stA3">未测试</span></div>
+        <div class="api-row"><span class="api-id">A4</span>
+          <input id="cfgKeyA4" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" style="height:34px;border:1px solid var(--line);border-radius:var(--r-s);padding:0 10px;font-size:12px;outline:0;font-family:monospace" />
+          <span class="api-type">Chatflow · 修改助手</span>
+          <span class="api-status" id="stA4">未测试</span></div>
+        <div class="api-row"><span class="api-id">R1</span>
+          <input id="cfgKeyR1" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" style="height:34px;border:1px solid var(--line);border-radius:var(--r-s);padding:0 10px;font-size:12px;outline:0;font-family:monospace" />
+          <span class="api-type">Workflow · 复盘分析</span>
+          <span class="api-status" id="stR1">未测试</span></div>
+        <div class="api-row"><span class="api-id">R2</span>
+          <input id="cfgKeyR2" class="mono" placeholder="app-xxxxxxxxxxxxxxxx" style="height:34px;border:1px solid var(--line);border-radius:var(--r-s);padding:0 10px;font-size:12px;outline:0;font-family:monospace" />
+          <span class="api-type">Workflow · 复盘报告</span>
+          <span class="api-status" id="stR2">未测试</span></div>
+      </div>
+
+      <div style="display:flex;gap:9px;margin-top:16px;align-items:center">
+        <button class="btn btn-primary" id="btnSaveConfig">保存配置</button>
+        <span style="font-size:11.5px;color:var(--subtle)">配置保存在服务器数据库中，所有用户共享</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd bd"><div><h3>应用注册表</h3><p>Dify 工作流输入输出字段映射参考</p></div>
+      <span class="pill pill-blue">统一接口协议</span></div>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th style="width:60px">编号</th><th style="width:140px">应用</th>
+        <th style="width:100px">类型</th><th>输入变量</th><th style="width:100px">状态</th></tr></thead>
+      <tbody>
+        <tr><td><b>A1</b></td><td>SOP 大纲生成</td><td><span class="pill">Workflow</span></td>
+          <td style="font-size:11.5px;color:var(--muted)">activity_name, activity_type, background, date, target, budget, department</td>
+          <td><span class="pill" id="regSt1">未配置</span></td></tr>
+        <tr><td><b>A2</b></td><td>执行主表生成</td><td><span class="pill">Workflow</span></td>
+          <td style="font-size:11.5px;color:var(--muted)">sop_outline, project_info</td>
+          <td><span class="pill" id="regSt2">未配置</span></td></tr>
+        <tr><td><b>A3</b></td><td>配套成果生成</td><td><span class="pill">Workflow</span></td>
+          <td style="font-size:11.5px;color:var(--muted)">task_table, project_info, asset_type</td>
+          <td><span class="pill" id="regSt3">未配置</span></td></tr>
+        <tr><td><b>A4</b></td><td>AI 修改助手</td><td><span class="pill pill-purple">Chatflow</span></td>
+          <td style="font-size:11.5px;color:var(--muted)">project_context (对话输入)</td>
+          <td><span class="pill" id="regSt4">未配置</span></td></tr>
+        <tr><td><b>R1</b></td><td>活动复盘分析</td><td><span class="pill">Workflow</span></td>
+          <td style="font-size:11.5px;color:var(--muted)">event_data, task_table, project_info, feedback_data</td>
+          <td><span class="pill" id="regSt5">未配置</span></td></tr>
+        <tr><td><b>R2</b></td><td>复盘报告生成</td><td><span class="pill">Workflow</span></td>
+          <td style="font-size:11.5px;color:var(--muted)">r1_analysis, project_info</td>
+          <td><span class="pill" id="regSt6">未配置</span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ Dify 调用记录 ═══════════════════ -->
+<section class="page" id="p-dify-calls">
+  <div class="phead">
+    <div><h1>Dify 调用记录</h1><p>查看所有通过后端代理发起的 Dify API 调用</p></div>
+    <div class="phead-act">
+      <select id="difyFilterApp" style="height:35px;border:1px solid var(--line);border-radius:var(--r-m);padding:0 10px;font-size:13px;outline:0;min-width:130px">
+        <option value="">全部应用</option>
+        <option value="A1">A1 SOP大纲</option><option value="A2">A2 执行主表</option>
+        <option value="A3">A3 配套成果</option><option value="A4">A4 修改助手</option>
+        <option value="R1">R1 复盘分析</option><option value="R2">R2 复盘报告</option>
+      </select>
+      <select id="difyFilterStatus" style="height:35px;border:1px solid var(--line);border-radius:var(--r-m);padding:0 10px;font-size:13px;outline:0;min-width:100px">
+        <option value="">全部状态</option><option value="success">成功</option><option value="error">失败</option>
+      </select>
+      <button class="btn" id="btnDifyFilter">筛选</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th style="width:50px">ID</th><th>应用</th><th>类型</th><th>耗时</th>
+        <th>状态</th><th>错误信息</th><th>时间</th></tr></thead>
+      <tbody id="difyTableBody">
+        <tr><td colspan="7" style="text-align:center;color:var(--subtle);padding:40px">加载中…</td></tr>
+      </tbody>
+    </table></div>
+    <div class="card-ft">
+      <span id="difyPageInfo" style="font-size:12px;color:var(--muted)"></span>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm" id="btnDifyPrev">上一页</button>
+        <button class="btn btn-sm" id="btnDifyNext">下一页</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ 操作日志 ═══════════════════ -->
+<section class="page" id="p-logs">
+  <div class="phead">
+    <div><h1>操作日志</h1><p>平台所有操作的审计记录</p></div>
+  </div>
+  <div class="card">
+    <div class="card-bd" id="logsBody" style="max-height:600px;overflow:auto">
+      <span style="color:var(--subtle)">加载中…</span>
+    </div>
+    <div class="card-ft">
+      <span id="logsPageInfo" style="font-size:12px;color:var(--muted)"></span>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm" id="btnLogsPrev">上一页</button>
+        <button class="btn btn-sm" id="btnLogsNext">下一页</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ 字段参考 ═══════════════════ -->
+<section class="page" id="p-field-ref">
+  <div class="phead"><div><h1>Dify 工作流字段参考</h1><p>确保你的 Dify 应用输入变量名与下方一致</p></div></div>
+
+  <div class="grid-2">
+    <div class="card"><div class="card-hd bd"><div><h3>A1 · SOP 大纲生成</h3><p>Workflow 类型</p></div></div>
+      <div class="card-bd"><div class="note note-blue"><b>输入变量</b>
+        activity_name（活动名称）、activity_type（活动类型）、background（活动背景）、date（活动时间）、target（目标对象）、budget（预算上限）、department（创建部门）</div>
+        <div class="note note-green" style="margin-top:10px"><b>输出建议</b>Markdown 格式文本，包含大纲结构</div>
+      </div></div>
+    <div class="card"><div class="card-hd bd"><div><h3>A2 · 执行主表生成</h3><p>Workflow 类型</p></div></div>
+      <div class="card-bd"><div class="note note-blue"><b>输入变量</b>
+        sop_outline（A1 确认后的大纲文本）、project_info（项目基本信息 JSON）</div>
+        <div class="note note-green" style="margin-top:10px"><b>输出建议</b>Markdown 表格或结构化任务列表</div>
+      </div></div>
+    <div class="card"><div class="card-hd bd"><div><h3>A3 · 配套成果生成</h3><p>Workflow 类型</p></div></div>
+      <div class="card-bd"><div class="note note-blue"><b>输入变量</b>
+        task_table（A2 确认的执行主表）、project_info（项目信息 JSON）、asset_type（成果类型）</div>
+        <div class="note note-green" style="margin-top:10px"><b>输出建议</b>Markdown 格式，含各类配套文档内容</div>
+      </div></div>
+    <div class="card"><div class="card-hd bd"><div><h3>A4 · AI 修改助手</h3><p>Chatflow 类型</p></div></div>
+      <div class="card-bd"><div class="note note-blue"><b>输入变量</b>
+        project_context（项目上下文 JSON，含 sop_outline/task_table/assets 等）</div>
+        <div class="note note-amber" style="margin-top:10px"><b>注意</b>A4 是对话模式（Chatflow），用户通过 query 发送修改指令</div>
+      </div></div>
+    <div class="card"><div class="card-hd bd"><div><h3>R1 · 活动复盘分析</h3><p>Workflow 类型</p></div></div>
+      <div class="card-bd"><div class="note note-blue"><b>输入变量</b>
+        event_data（附件数据）、task_table（执行主表）、project_info（项目信息 JSON）、feedback_data（反馈数据）</div>
+        <div class="note note-green" style="margin-top:10px"><b>输出建议</b>分析结论，Markdown 格式</div>
+      </div></div>
+    <div class="card"><div class="card-hd bd"><div><h3>R2 · 复盘报告生成</h3><p>Workflow 类型</p></div></div>
+      <div class="card-bd"><div class="note note-blue"><b>输入变量</b>
+        r1_analysis（R1 确认的分析结论）、project_info（项目信息 JSON）</div>
+        <div class="note note-green" style="margin-top:10px"><b>输出建议</b>完整复盘报告，Markdown 格式</div>
+      </div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ 导出/导入 ═══════════════════ -->
+<section class="page" id="p-export">
+  <div class="phead"><div><h1>导出 / 导入</h1><p>全量数据备份与恢复</p></div></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd bd"><div><h3>📤 导出数据</h3><p>将配置和全部项目数据导出为 JSON 文件</p></div></div>
+      <div class="card-bd">
+        <p style="font-size:12.5px;color:var(--muted);margin:0 0 16px">导出内容包括：API 配置、全部项目及其各模块数据（A1-A4、R1-R2）、版本记录、活动动态。</p>
+        <button class="btn btn-primary" id="btnExportAll">导出全量数据</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd bd"><div><h3>📥 导入数据</h3><p>从之前导出的 JSON 文件恢复数据</p></div></div>
+      <div class="card-bd">
+        <p style="font-size:12.5px;color:var(--muted);margin:0 0 16px">导入会新增项目记录，不会覆盖已有项目。配置项（API Key 等）会被导入文件中的值替换。</p>
+        <button class="btn" id="btnImportAll">选择文件并导入</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" />
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+/* 后端地址：优先用 localStorage 缓存，其次当前域名 */
+var savedAPI=localStorage.getItem('sop_admin_api');
+var API=savedAPI||window.location.origin;
+
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return document.querySelectorAll(s)};
+
+/* 检测后端是否可达，不可达时弹出配置框 */
+async function checkBackend(){
+  try{
+    var r=await fetch(API+'/api/stats',{method:'GET',signal:AbortSignal.timeout(5000)});
+    if(r.ok)return;throw new Error('not ok');
+  }catch(e){
+    var addr=prompt('无法连接后端 API（'+API+'）。\n请输入后端服务地址，例如：\nhttp://localhost:8000\nhttp://192.168.1.100:8000','http://localhost:8000');
+    if(addr){
+      addr=addr.replace(/\/+$/,'');
+      localStorage.setItem('sop_admin_api',addr);
+      API=addr;
+      toast('已切换后端地址: '+addr);
+      go(curPage);
+    }
+  }
+}
+setTimeout(checkBackend,300);
+
+/* ---- Toast ---- */
+var toastT;
+function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('on')},3200)}
+
+function esc(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+/* ════════════ 路由 ════════════ */
+var curPage='dashboard';
+function go(id){
+  curPage=id;
+  $$('.page').forEach(function(p){p.classList.toggle('on',p.id==='p-'+id)});
+  $$('.nav-item').forEach(function(n){n.classList.toggle('on',n.getAttribute('data-page')===id)});
+  if(id==='dashboard')loadDashboard();
+  if(id==='projects')loadProjects();
+  if(id==='config')loadConfig();
+  if(id==='dify-calls')loadDifyCalls();
+  if(id==='logs')loadLogs();
+}
+$$('.nav-item').forEach(function(n){n.onclick=function(){go(n.getAttribute('data-page'))}});
+$('#btnRefreshAll').onclick=function(){go(curPage);toast('已刷新')};
+
+/* ════════════ 数据看板 ════════════ */
+async function loadDashboard(){
+  try{
+    var res=await fetch(API+'/api/stats');var s=await res.json();
+    $('#dashTime').textContent='更新于 '+new Date().toLocaleTimeString();
+    $('#mProjects').textContent=s.total_projects;
+    var statusParts=[];for(var k in s.projects_by_status)statusParts.push(k+': '+s.projects_by_status[k]);
+    $('#mProjectsSub').textContent=statusParts.join(' / ')||'暂无项目';
+
+    $('#mCalls').textContent=s.total_dify_calls;
+    var appParts=[];for(var k in s.calls_by_app)appParts.push(k+': '+s.calls_by_app[k]);
+    $('#mCallsSub').textContent=appParts.join(' / ')||'暂无调用';
+
+    $('#mAvgTime').textContent=s.avg_duration_ms?((s.avg_duration_ms/1000).toFixed(1)+'s'):'N/A';
+
+    var succ=s.calls_by_status.success||0;var err=s.calls_by_status.error||0;var total=succ+err;
+    if(total>0){$('#mSuccessRate').textContent=Math.round(succ/total*100)+'%';
+      $('#mSuccessSub').textContent='成功 '+succ+' / 失败 '+err}
+    else{$('#mSuccessRate').textContent='N/A';$('#mSuccessSub').textContent='暂无数据'}
+
+    // 7日调用趋势
+    var chart=$('#chartCalls');
+    if(s.daily_calls_7d&&s.daily_calls_7d.length){
+      var max=Math.max.apply(null,s.daily_calls_7d.map(function(d){return d.count}))||1;
+      chart.innerHTML=s.daily_calls_7d.map(function(d){
+        var h=Math.max(4,d.count/max*100);
+        return'<div class="bar" style="height:'+h+'%"><span class="bar-label">'+d.count+'</span><span class="bar-date">'+d.date.slice(5)+'</span></div>'
+      }).join('')
+    }else{chart.innerHTML='<span style="color:var(--subtle);font-size:12px">近 7 天无调用记录</span>'}
+
+    // 应用分布
+    var apps=$('#chartApps');
+    if(Object.keys(s.calls_by_app).length){
+      var maxApp=Math.max.apply(null,Object.values(s.calls_by_app))||1;
+      var colors={A1:'var(--blue)',A2:'var(--green)',A3:'var(--amber)',A4:'var(--purple)',R1:'var(--orange)',R2:'var(--red)'};
+      apps.innerHTML=Object.keys(s.calls_by_app).map(function(k){
+        var pct=Math.round(s.calls_by_app[k]/maxApp*100);
+        return'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+
+          '<b style="width:30px;font-size:12px">'+k+'</b>'+
+          '<div style="flex:1;height:22px;background:var(--line2);border-radius:6px;overflow:hidden">'+
+          '<div style="height:100%;width:'+pct+'%;background:'+(colors[k]||'var(--blue)')+';border-radius:6px;transition:.4s"></div></div>'+
+          '<span style="font-size:12px;font-weight:700;width:40px;text-align:right">'+s.calls_by_app[k]+'</span></div>'
+      }).join('')
+    }else{apps.innerHTML='<span style="color:var(--subtle);font-size:12px">暂无调用数据</span>'}
+
+    // 项目状态
+    var ps=$('#chartProjectStatus');
+    var statusNames={draft:'草稿',generating:'生成中',active:'进行中',completed:'已完成'};
+    var statusColors={draft:'var(--amber)',generating:'var(--blue)',active:'var(--green)',completed:'var(--purple)'};
+    if(Object.keys(s.projects_by_status).length){
+      ps.innerHTML='<div style="display:flex;gap:20px;flex-wrap:wrap">'+Object.keys(s.projects_by_status).map(function(k){
+        return'<div style="display:flex;align-items:center;gap:8px">'+
+          '<div style="width:12px;height:12px;border-radius:4px;background:'+(statusColors[k]||'var(--subtle)')+'"></div>'+
+          '<span style="font-size:13px">'+(statusNames[k]||k)+'</span>'+
+          '<b style="font-size:15px;font-weight:800">'+s.projects_by_status[k]+'</b></div>'
+      }).join('')+'</div>'
+    }else{ps.innerHTML='<span style="color:var(--subtle);font-size:12px">暂无项目</span>'}
+
+  }catch(e){toast('加载统计数据失败');console.error(e)}
+}
+
+/* ════════════ 项目管理 ════════════ */
+var projPage=1;
+async function loadProjects(page){
+  projPage=page||1;
+  var search=$('#projSearch').value.trim();
+  var url=API+'/api/projects?page='+projPage+'&page_size=15';
+  if(search)url+='&search='+encodeURIComponent(search);
+  try{
+    var res=await fetch(url);var data=await res.json();
+    var statusMap={draft:'草稿',generating:'生成中',active:'进行中',completed:'已完成'};
+    var statusCls={draft:'pill-amber',generating:'pill-blue',active:'pill-green',completed:'pill-purple'};
+    var tb=$('#projTableBody');
+    if(!data.items.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--subtle);padding:40px">暂无项目数据</td></tr>';
+    }else{
+      tb.innerHTML=data.items.map(function(p){
+        return'<tr>'+
+          '<td><b>'+p.id+'</b></td>'+
+          '<td>'+esc(p.name)+'</td>'+
+          '<td>'+esc(p.activity_type||'-')+'</td>'+
+          '<td>'+esc(p.department||'-')+'</td>'+
+          '<td>'+esc(p.date||'-')+'</td>'+
+          '<td><span class="pill '+(statusCls[p.status]||'')+'">'+(statusMap[p.status]||p.status)+'</span></td>'+
+          '<td style="font-size:11.5px;color:var(--muted)">'+esc((p.updated_at||'').replace('T',' ').slice(0,19))+'</td>'+
+          '<td><button class="btn btn-sm btn-danger" onclick="deleteProject('+p.id+',\''+esc(p.name).replace(/'/g,"\\'")+'\')">删除</button></td>'+
+          '</tr>'
+      }).join('')
+    }
+    $('#projPageInfo').textContent='第 '+data.page+' / '+data.total_pages+' 页，共 '+data.total+' 个项目';
+    $('#btnProjPrev').disabled=data.page<=1;
+    $('#btnProjNext').disabled=data.page>=data.total_pages;
+  }catch(e){toast('加载项目列表失败')}
+}
+$('#btnProjSearch').onclick=function(){loadProjects(1)};
+$('#projSearch').addEventListener('keydown',function(e){if(e.key==='Enter')loadProjects(1)});
+$('#btnProjPrev').onclick=function(){if(projPage>1)loadProjects(projPage-1)};
+$('#btnProjNext').onclick=function(){loadProjects(projPage+1)};
+
+window.deleteProject=async function(id,name){
+  if(!confirm('确定要删除项目「'+name+'」吗？此操作不可撤回。'))return;
+  try{await fetch(API+'/api/projects/'+id,{method:'DELETE'});toast('已删除');loadProjects(projPage)}
+  catch(e){toast('删除失败')}
+};
+
+/* ════════════ API 配置 ════════════ */
+var KEYS=['A1','A2','A3','A4','R1','R2'];
+
+async function loadConfig(){
+  try{
+    var res=await fetch(API+'/api/config');var data=await res.json();
+    $('#cfgBaseUrl').value=data.base_url||'';
+    KEYS.forEach(function(k){
+      var inp=$('#cfgKey'+k);
+      if(inp&&data.keys&&data.keys[k])inp.value=data.keys[k].raw||'';
+    });
+    updateRegStatus(data);
+  }catch(e){toast('加载配置失败')}
+}
+
+function updateRegStatus(data){
+  KEYS.forEach(function(k,i){
+    var el=$('#regSt'+(i+1));
+    var configured=data&&data.keys&&data.keys[k]&&data.keys[k].configured;
+    if(configured){el.textContent='已配置';el.className='pill pill-green'}
+    else{el.textContent='未配置';el.className='pill'}
+  });
+}
+
+$('#btnSaveConfig').onclick=async function(){
+  var body={base_url:$('#cfgBaseUrl').value.trim().replace(/\/+$/,'')};
+  KEYS.forEach(function(k){body['key_'+k.toLowerCase()]=$('#cfgKey'+k).value.trim()});
+  try{
+    var res=await fetch(API+'/api/config',{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)});
+    if(res.ok){toast('配置已保存');loadConfig()}else toast('保存失败')
+  }catch(e){toast('保存失败: '+e.message)}
+};
+
+async function testOne(appId){
+  var st=$('#st'+appId);
+  st.innerHTML='<span class="spinner spinner-sm"></span>';st.className='api-status';
+  try{
+    var res=await fetch(API+'/api/config/test/'+appId,{method:'POST'});var d=await res.json();
+    if(d.ok){st.textContent='✓ 连通';st.className='api-status ok'}
+    else{st.textContent='× '+(d.error||'失败');st.className='api-status err'}
+  }catch(e){st.textContent='× 网络错误';st.className='api-status err'}
+}
+
+$('#btnTestAllAdmin').onclick=async function(){
+  for(var i=0;i<KEYS.length;i++)await testOne(KEYS[i]);
+  toast('连接测试完成')};
+
+/* ════════════ Dify 调用记录 ════════════ */
+var difyPage=1;
+async function loadDifyCalls(page){
+  difyPage=page||1;
+  var appId=$('#difyFilterApp').value;var status=$('#difyFilterStatus').value;
+  var url=API+'/api/dify-calls?page='+difyPage+'&page_size=20';
+  if(appId)url+='&app_id='+appId;
+  if(status)url+='&status='+status;
+  try{
+    var res=await fetch(url);var data=await res.json();
+    var tb=$('#difyTableBody');
+    if(!data.items.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--subtle);padding:40px">暂无调用记录</td></tr>';
+    }else{
+      tb.innerHTML=data.items.map(function(c){
+        var stCls=c.status==='success'?'pill-green':'pill-red';
+        return'<tr>'+
+          '<td>'+c.id+'</td>'+
+          '<td><b>'+esc(c.app_id)+'</b></td>'+
+          '<td><span class="pill">'+esc(c.call_type)+'</span></td>'+
+          '<td>'+(c.duration_ms?(c.duration_ms/1000).toFixed(1)+'s':'-')+'</td>'+
+          '<td><span class="pill '+stCls+'">'+(c.status==='success'?'成功':'失败')+'</span></td>'+
+          '<td style="font-size:11px;color:var(--red);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.error_msg||'-')+'</td>'+
+          '<td style="font-size:11.5px;color:var(--muted)">'+esc((c.created_at||'').replace('T',' ').slice(0,19))+'</td></tr>'
+      }).join('')
+    }
+    $('#difyPageInfo').textContent='第 '+data.page+' 页，共 '+data.total+' 条';
+    $('#btnDifyPrev').disabled=difyPage<=1;
+    $('#btnDifyNext').disabled=data.items.length<20;
+  }catch(e){toast('加载调用记录失败')}
+}
+$('#btnDifyFilter').onclick=function(){loadDifyCalls(1)};
+$('#btnDifyPrev').onclick=function(){if(difyPage>1)loadDifyCalls(difyPage-1)};
+$('#btnDifyNext').onclick=function(){loadDifyCalls(difyPage+1)};
+
+/* ════════════ 操作日志 ════════════ */
+var logsPage=1;
+async function loadLogs(page){
+  logsPage=page||1;
+  try{
+    var res=await fetch(API+'/api/logs?page='+logsPage+'&page_size=30');var data=await res.json();
+    var el=$('#logsBody');
+    if(!data.items.length){el.innerHTML='<span style="color:var(--subtle)">暂无操作日志</span>';
+    }else{
+      var iconMap={create_project:'📁',update_project:'✏️',delete_project:'🗑️',
+        update_config:'🔑',import_data:'📥',export_data:'📤'};
+      var clsMap={config:'config',project:'project',system:'system'};
+      el.innerHTML=data.items.map(function(l){
+        return'<div class="log-item">'+
+          '<div class="log-icon '+(clsMap[l.module]||'')+'">'+(iconMap[l.action]||'📋')+'</div>'+
+          '<div class="log-body"><b>'+esc(l.action)+'</b>'+
+          '<div style="font-size:12px;color:var(--ink2);margin:2px 0">'+esc(l.detail)+'</div>'+
+          '<small>'+esc((l.created_at||'').replace('T',' ').slice(0,19))+
+          (l.project_id?' · 项目 #'+l.project_id:'')+'</small></div></div>'
+      }).join('')
+    }
+    $('#logsPageInfo').textContent='第 '+data.page+' 页，共 '+data.total+' 条';
+    $('#btnLogsPrev').disabled=logsPage<=1;
+    $('#btnLogsNext').disabled=data.items.length<30;
+  }catch(e){toast('加载日志失败')}
+}
+$('#btnLogsPrev').onclick=function(){if(logsPage>1)loadLogs(logsPage-1)};
+$('#btnLogsNext').onclick=function(){loadLogs(logsPage+1)};
+
+/* ════════════ 导出/导入 ════════════ */
+$('#btnExportAll').onclick=async function(){
+  try{
+    var res=await fetch(API+'/api/export');if(!res.ok)throw new Error('导出失败');
+    var data=await res.json();
+    var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='sop-platform-export-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();URL.revokeObjectURL(a.href);toast('全量数据已导出')
+  }catch(e){toast('导出失败: '+e.message)}
+};
+
+$('#btnImportAll').onclick=function(){$('#importFile').click()};
+$('#importFile').onchange=function(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();r.onload=async function(){
+    try{
+      var res=await fetch(API+'/api/import',{method:'POST',
+        headers:{'Content-Type':'application/json'},body:r.result});
+      if(!res.ok)throw new Error('导入失败');
+      var d=await res.json();
+      toast('导入完成: 配置='+(d.imported.config?'是':'否')+', 项目='+d.imported.projects+'个');
+      go(curPage);
+    }catch(ex){toast('导入失败: '+ex.message)}
+  };r.readAsText(f);e.target.value='';
+};
+
+/* ════════════ 初始化 ════════════ */
+loadDashboard();
+})();
+</script>
+</body>
+</html>
