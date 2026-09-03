@@ -25,6 +25,8 @@ class Config:
     # ── 服务 ──
     PORT = int(os.getenv("PORT", "8000"))
     DEBUG = _bool("FLASK_DEBUG")
+    # 演示模式：对未配置真实 Key 的 Dify 应用返回预置演示内容，便于走通完整链路
+    DEMO_MODE = _bool("DEMO_MODE")
     # 单个请求体上限，防止超大 payload 打爆内存
     MAX_CONTENT_LENGTH = int(os.getenv("MAX_CONTENT_LENGTH", str(4 * 1024 * 1024)))
 

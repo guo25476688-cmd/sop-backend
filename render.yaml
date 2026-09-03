@@ -9,6 +9,8 @@ services:
     envVars:
       - key: FLASK_DEBUG
         value: "0"
+      - key: DEMO_MODE          # 未配置真实 Dify Key 的应用返回预置演示内容
+        value: "1"
       # 以下变量在 Render 控制台按需填写（sync: false 表示不写入仓库）
       - key: APP_SECRET_KEY   # Fernet 密钥，加密数据库中的 API Key
         sync: false

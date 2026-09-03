@@ -961,6 +961,10 @@ table.dtbl td:nth-child(13){min-width:180px}
       </div>
     </div>
 
+    <div id="demoBanner" class="note note-amber" style="display:none;margin-bottom:14px">
+      <b style="display:inline">演示模式已开启</b>：未配置真实 Key 的 AI 应用会返回预置的示例内容（以「高管 AI 应用实战工作坊」为样例），可直接走通「新建项目 → 复盘报告」全流程。填入真实 Dify Key 即切回真实调用。
+    </div>
+
     <!-- ★★★ API 密钥配置 ★★★ -->
     <div class="card" style="margin-bottom:14px" id="apiConfigCard">
       <div class="card-hd bd">
@@ -1411,6 +1415,8 @@ var CONFIG={
   baseUrl:'',
   keys:{A1:'',A2:'',A3:'',A4:'',R1:'',R2:''}
 };
+var DEMO_MODE=false;  // 后端 DEMO_MODE：未配置的应用返回预置演示内容
+function canRun(appId){return !!CONFIG.keys[appId]||DEMO_MODE}
 
 async function loadConfig(){
   try{
@@ -1418,6 +1424,7 @@ async function loadConfig(){
     if(res.ok){
       var data=await res.json();
       CONFIG.baseUrl=data.base_url||'';
+      DEMO_MODE=!!data.demo_mode;
       CONFIG.keys={A1:'',A2:'',A3:'',A4:'',R1:'',R2:''};
       if(data.keys){for(var k in data.keys){var it=data.keys[k];if(it)CONFIG.keys[k]=it.raw||it.masked||''}}
     }
@@ -1428,6 +1435,7 @@ async function loadConfig(){
   }
   $('#cfgBaseUrl').value=CONFIG.baseUrl;
   var tokInput=$('#cfgAdminToken');if(tokInput)tokInput.value=ADMIN_TOKEN;
+  var db=$('#demoBanner');if(db)db.style.display=DEMO_MODE?'':'none';
   ['A1','A2','A3','A4','R1','R2'].forEach(function(k){$('#cfgKey'+k).value=CONFIG.keys[k]||''});
   updateRegStatus();
 }
@@ -1450,6 +1458,7 @@ function updateRegStatus(){
   var ids=['A1','A2','A3','A4','R1','R2'];
   ids.forEach(function(k,i){
     var el=$('#regSt'+(i+1));
+    if(!CONFIG.keys[k]&&DEMO_MODE){el.textContent='演示';el.className='pill pill-amber';return}
     if(CONFIG.keys[k]){el.textContent='已配置';el.className='pill pill-green'}
     else{el.textContent='未配置';el.className='pill'}
   });
@@ -1996,7 +2005,7 @@ $('#btnConfirmA1').onclick=function(){
 };
 
 $('#btnRegenA1').onclick=async function(){
-  if(!CONFIG.keys.A1){toast('请先在管理后台配置 A1 的 API Key');go('admin');return}
+  if(!canRun('A1')){toast('请先在管理后台配置 A1 的 API Key');go('admin');return}
   toast('正在重新生成 SOP 大纲…');
   go('generating');
   $('#genTitle').textContent='正在重新生成 SOP 大纲';
@@ -2038,7 +2047,7 @@ $('#btnDownloadA1').onclick=function(){
 /* ==================== A2 执行主表 ==================== */
 $('#btnGenA2').onclick=async function(){
   if(!PROJECT.a1.confirmed){toast('请先确认 A1 SOP 大纲');go('a1');return}
-  if(!CONFIG.keys.A2){toast('请先在管理后台配置 A2 的 API Key');go('admin');return}
+  if(!canRun('A2')){toast('请先在管理后台配置 A2 的 API Key');go('admin');return}
   toast('正在生成执行主表…');
   $('#a2Hold').innerHTML='<div style="text-align:center;padding:40px"><span class="spinner"></span><br><br>正在调用 Dify A2 工作流生成执行主表…</div>';
   try{
@@ -2152,7 +2161,7 @@ $('#btnCopyTable').onclick=function(){
 /* ==================== A3 配套成果 ==================== */
 $('#btnGenAssets').onclick=async function(){
   if(!PROJECT.a2.confirmed){toast('请先确认 A2 执行主表');go('a2');return}
-  if(!CONFIG.keys.A3){toast('请先在管理后台配置 A3 的 API Key');go('admin');return}
+  if(!canRun('A3')){toast('请先在管理后台配置 A3 的 API Key');go('admin');return}
   toast('正在生成配套成果…');
   $('#a3Content').style.display='';
   $('#a3DocBody').innerHTML='<div style="text-align:center;padding:30px"><span class="spinner"></span><br><br>正在调用 Dify A3 工作流…</div>';
@@ -2182,7 +2191,7 @@ $('#r1FileInput').onchange=function(e){
 };
 
 $('#btnRunR1').onclick=async function(){
-  if(!CONFIG.keys.R1){toast('请先在管理后台配置 R1 的 API Key');go('admin');return}
+  if(!canRun('R1')){toast('请先在管理后台配置 R1 的 API Key');go('admin');return}
   toast('正在调用 Dify R1 复盘工作流…');
   $('#r1Hold').innerHTML='<div style="text-align:center;padding:40px"><span class="spinner"></span><br><br>正在分析…</div>';
   try{
@@ -2218,7 +2227,7 @@ $('#btnConfirmR1').onclick=function(){
 /* ==================== R2 复盘报告 ==================== */
 $('#btnGenR2').onclick=async function(){
   if(!PROJECT.r1.confirmed){toast('请先确认 R1 复盘结论');go('r1');return}
-  if(!CONFIG.keys.R2){toast('请先在管理后台配置 R2 的 API Key');go('admin');return}
+  if(!canRun('R2')){toast('请先在管理后台配置 R2 的 API Key');go('admin');return}
   toast('正在生成复盘报告…');
   $('#r2Hold').innerHTML='<div style="text-align:center;padding:40px"><span class="spinner"></span><br><br>正在调用 Dify R2 工作流…</div>';
   try{
