@@ -8,7 +8,11 @@
 
 技术关键词：Dify Workflow、Chatflow、RAG、LLM、LangChain、Python
 
-**在线体验**：<!-- DEMO_URL -->（部署中，稍后补充） ｜ 业务工作台 `/` ｜ 运营管理后台 `/admin`
+**在线体验**：<https://sop-backend-yuoa.onrender.com>
+（业务工作台 `/` ｜ 运营管理后台 `/admin`）
+
+> Render 免费实例，闲置后会休眠，**首次打开需等 30–60 秒冷启动**，属正常现象。
+> 演示环境未接真实 Dify Key，AI 生成步骤会提示"请先配置"——这一步的实现见 [main.py](main.py) 的 Dify 代理层与 [docs/03](docs/03-orchestration.md)。
 
 ---
 
@@ -21,7 +25,8 @@
 | 任务编排：能力模块化 + Dify Workflow/Chatflow 组合 | [docs/03-orchestration.md](docs/03-orchestration.md) |
 | 质量评估：四维框架、50+ Case、BadCase 四类归因的定位口径 | [docs/04-evaluation.md](docs/04-evaluation.md) |
 | 工程实现：鉴权、密钥加密、错误处理、测试 | [main.py](main.py) · [docs/05-api-reference.md](docs/05-api-reference.md) |
-| 跑一遍：在线体验里从「新建项目」走到「复盘报告」 | 上方在线体验链接 |
+
+**在线走一遍**：打开在线体验 → 首页看六大模块闭环 → 点「新建项目」（已预填一个活动样例）→ 一路「确认」推进：SOP 大纲 → 执行主表 → 配套成果 → 复盘分析 → 复盘报告，注意每个高风险环节的人工确认卡点；`/admin` 看数据看板、Dify 调用记录、操作日志。
 
 ---
 
