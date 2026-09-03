@@ -8,6 +8,21 @@
 
 技术关键词：Dify Workflow、Chatflow、RAG、LLM、LangChain、Python
 
+**在线体验**：<!-- DEMO_URL -->（部署中，稍后补充） ｜ 业务工作台 `/` ｜ 运营管理后台 `/admin`
+
+---
+
+## 面试官 5 分钟导览
+
+| 想看什么 | 去哪里 |
+| --- | --- |
+| 产品架构思路：六大模块、数据契约、人工卡点的取舍 | [docs/01-architecture.md](docs/01-architecture.md) |
+| RAG 体系设计：按用途分四库、分层切片、关键词+向量双路召回 | [docs/02-rag-design.md](docs/02-rag-design.md) |
+| 任务编排：能力模块化 + Dify Workflow/Chatflow 组合 | [docs/03-orchestration.md](docs/03-orchestration.md) |
+| 质量评估：四维框架、50+ Case、BadCase 四类归因的定位口径 | [docs/04-evaluation.md](docs/04-evaluation.md) |
+| 工程实现：鉴权、密钥加密、错误处理、测试 | [main.py](main.py) · [docs/05-api-reference.md](docs/05-api-reference.md) |
+| 跑一遍：在线体验里从「新建项目」走到「复盘报告」 | 上方在线体验链接 |
+
 ---
 
 ## 1. 这个仓库是什么
