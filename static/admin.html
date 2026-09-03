@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>管理后台 · AI 活动 SOP 智能运营平台</title>
+<title>运营管理后台 · 企业级 AI 应用运营平台</title>
 <style>
 :root{
   --ink:#161d2b;--ink2:#2b3648;--muted:#69748a;--subtle:#93a0b4;
@@ -200,8 +200,8 @@ table.tbl tbody tr:hover td{background:#fafcff}
 <!-- 顶栏 -->
 <header class="topbar">
   <div class="brand">
-    <div class="brand-mark">S</div>
-    <div><b>AI SOP 平台</b><span>管理后台</span></div>
+    <div class="brand-mark">AI</div>
+    <div><b>AI 应用运营平台</b><span>运营管理后台 · 活动运营场景</span></div>
   </div>
   <div class="top-right">
     <a href="/" class="btn btn-sm" style="gap:5px">← 返回前台</a>
@@ -314,6 +314,12 @@ table.tbl tbody tr:hover td{background:#fafcff}
         <span>Dify 平台地址<i>*</i></span>
         <input id="cfgBaseUrl" class="mono" placeholder="例如：https://dify.yourcompany.com/v1" />
         <div class="hint">填写公司 Dify 实例的 API 地址，通常以 /v1 结尾。Dify 调用通过后端代理转发，无需担心跨域问题。</div>
+      </label>
+
+      <label class="fld" style="margin-top:10px">
+        <span>管理令牌 <span style="color:var(--subtle);font-weight:400">(可选)</span></span>
+        <input id="cfgAdminToken" class="mono" type="password" placeholder="仅当后端设置了 ADMIN_TOKEN 时需要填写" />
+        <div class="hint">后端未设置 <code>ADMIN_TOKEN</code> 时留空。填写后随写接口发送（<code>X-Admin-Token</code> 头），仅存本机浏览器。</div>
       </label>
 
       <div style="margin-top:12px">
@@ -511,6 +517,28 @@ var API=savedAPI||window.location.origin;
 var $=function(s){return document.querySelector(s)};
 var $$=function(s){return document.querySelectorAll(s)};
 
+/* 管理令牌注入：后端配置 ADMIN_TOKEN 时，写接口需带 X-Admin-Token */
+var ADMIN_TOKEN=localStorage.getItem('sop_admin_token')||'';
+function setAdminToken(t){
+  ADMIN_TOKEN=(t||'').trim();
+  if(ADMIN_TOKEN)localStorage.setItem('sop_admin_token',ADMIN_TOKEN);
+  else localStorage.removeItem('sop_admin_token');
+}
+(function(nativeFetch){
+  window.fetch=function(input,init){
+    try{
+      var url=(typeof input==='string')?input:(input&&input.url)||'';
+      if(ADMIN_TOKEN && (url.indexOf(API+'/api/')===0 || url.indexOf('/api/')===0)){
+        init=init||{};
+        var h=new Headers(init.headers||{});
+        h.set('X-Admin-Token',ADMIN_TOKEN);
+        init.headers=h;
+      }
+    }catch(e){}
+    return nativeFetch(input,init);
+  };
+})(window.fetch.bind(window));
+
 /* 检测后端是否可达，不可达时弹出配置框 */
 async function checkBackend(){
   try{
@@ -651,20 +679,29 @@ $('#btnProjNext').onclick=function(){loadProjects(projPage+1)};
 
 window.deleteProject=async function(id,name){
   if(!confirm('确定要删除项目「'+name+'」吗？此操作不可撤回。'))return;
-  try{await fetch(API+'/api/projects/'+id,{method:'DELETE'});toast('已删除');loadProjects(projPage)}
-  catch(e){toast('删除失败')}
+  try{
+    var r=await fetch(API+'/api/projects/'+id,{method:'DELETE'});
+    if(r.status===401){toast('需要管理员令牌，请在「API 配置」填写');return}
+    if(!r.ok){toast('删除失败');return}
+    toast('已删除');loadProjects(projPage);
+  }catch(e){toast('删除失败')}
 };
 
 /* ════════════ API 配置 ════════════ */
 var KEYS=['A1','A2','A3','A4','R1','R2'];
 
 async function loadConfig(){
+  var tok=$('#cfgAdminToken');if(tok)tok.value=ADMIN_TOKEN;
   try{
-    var res=await fetch(API+'/api/config');var data=await res.json();
+    var res=await fetch(API+'/api/config?reveal=1');var data=await res.json();
     $('#cfgBaseUrl').value=data.base_url||'';
     KEYS.forEach(function(k){
       var inp=$('#cfgKey'+k);
-      if(inp&&data.keys&&data.keys[k])inp.value=data.keys[k].raw||'';
+      if(!inp||!data.keys||!data.keys[k])return;
+      var info=data.keys[k];
+      inp.value=info.raw||info.masked||'';
+      inp.disabled=(info.editable===false);
+      inp.placeholder=info.editable===false?'由环境变量提供':'app-xxxxxxxxxxxxxxxx';
     });
     updateRegStatus(data);
   }catch(e){toast('加载配置失败')}
@@ -680,12 +717,15 @@ function updateRegStatus(data){
 }
 
 $('#btnSaveConfig').onclick=async function(){
+  var tok=$('#cfgAdminToken');if(tok)setAdminToken(tok.value);
   var body={base_url:$('#cfgBaseUrl').value.trim().replace(/\/+$/,'')};
   KEYS.forEach(function(k){body['key_'+k.toLowerCase()]=$('#cfgKey'+k).value.trim()});
   try{
     var res=await fetch(API+'/api/config',{method:'PUT',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(body)});
-    if(res.ok){toast('配置已保存');loadConfig()}else toast('保存失败')
+    if(res.ok){toast('配置已保存');loadConfig()}
+    else if(res.status===401){toast('管理令牌无效或缺失')}
+    else toast('保存失败')
   }catch(e){toast('保存失败: '+e.message)}
 };
 

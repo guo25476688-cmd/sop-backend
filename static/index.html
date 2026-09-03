@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="description" content="AI 活动 SOP 智能运营平台——从活动策划到复盘沉淀的完整闭环。" />
-<title>AI 活动 SOP 智能运营平台</title>
+<meta name="description" content="企业级 AI 应用运营平台——覆盖场景发现、需求分析、方案设计、应用建设、推广复用、效果评估的全生命周期闭环。当前部署：活动运营 SOP 场景。" />
+<title>企业级 AI 应用运营平台 · 活动运营场景</title>
 <style>
 /* ==========================================================================
    设计令牌
@@ -702,8 +702,8 @@ table.dtbl td:nth-child(13){min-width:180px}
 <!-- ====== 顶栏 ====== -->
 <header class="topbar">
   <div class="brand" data-go="landing">
-    <div class="brand-mark">A</div>
-    <div class="brand-copy"><b>AI 活动 SOP 智能运营平台</b><span>从活动策划到复盘沉淀的完整闭环</span></div>
+    <div class="brand-mark">AI</div>
+    <div class="brand-copy"><b>企业级 AI 应用运营平台</b><span>活动运营场景 · 从需求到复盘的全生命周期闭环</span></div>
   </div>
   <div class="top-right">
     <button class="icon-btn" id="btnSideToggle" title="展开导航">☰</button>
@@ -728,19 +728,19 @@ table.dtbl td:nth-child(13){min-width:180px}
     <button class="stage-item on" data-go="overview">
       <span class="sn">⌂</span><span class="st"><small>OVERVIEW</small><b>项目总览</b></span></button>
     <button class="stage-item done" data-go="a1">
-      <span class="sn">1</span><span class="st"><small>01 · 策划</small><b>SOP 大纲</b></span>
+      <span class="sn">1</span><span class="st"><small>需求分析 · 方案设计</small><b>SOP 大纲</b></span>
       <i class="sv ok" id="navA1">已确认</i></button>
     <button class="stage-item" data-go="a2">
-      <span class="sn">2</span><span class="st"><small>02 · 执行</small><b>执行主表</b></span>
+      <span class="sn">2</span><span class="st"><small>方案设计 · 资源规划</small><b>执行主表</b></span>
       <i class="sv warn" id="navA2">待确认</i></button>
     <button class="stage-item" data-go="a3">
-      <span class="sn">3</span><span class="st"><small>03 · 成果</small><b>配套成果</b></span>
+      <span class="sn">3</span><span class="st"><small>应用建设 · 成果输出</small><b>配套成果</b></span>
       <i class="sv" id="navA3">6 项</i></button>
     <button class="stage-item" data-go="r1">
-      <span class="sn">4</span><span class="st"><small>04 · 分析</small><b>数据复盘</b></span>
+      <span class="sn">4</span><span class="st"><small>效果评估 · 数据校验</small><b>数据复盘</b></span>
       <i class="sv" id="navR1">待开始</i></button>
     <button class="stage-item" data-go="r2">
-      <span class="sn">5</span><span class="st"><small>05 · 沉淀</small><b>经验沉淀</b></span>
+      <span class="sn">5</span><span class="st"><small>效果评估 · 推广复用</small><b>经验沉淀</b></span>
       <i class="sv" id="navR2">未生成</i></button>
   </nav>
 
@@ -807,9 +807,9 @@ table.dtbl td:nth-child(13){min-width:180px}
   <div class="land">
     <div class="hero">
       <div>
-        <span class="hero-kick">AI 活动运营 · 端到端闭环</span>
-        <h1>把活动想法，变成<em>可执行 SOP 与完整成果</em></h1>
-        <p>从需求输入、历史案例参考，到执行主表、配套成果和数据复盘。关键节点由人工确认，AI 不替你编造未确认信息。</p>
+        <span class="hero-kick">企业级 AI 应用运营平台 · 活动运营场景</span>
+        <h1>让 AI 能力从单点工具，<em>沉淀为组织级可复用资产</em></h1>
+        <p>覆盖场景发现、需求分析、方案设计、应用建设、推广复用、效果评估六大模块。本场景以「活动运营 SOP」跑通端到端闭环：需求输入 → 历史案例检索 → 执行主表 → 配套成果 → 数据复盘。关键节点由人工确认，AI 不替你编造未确认信息。</p>
         <div class="hero-btns">
           <button class="btn btn-primary btn-lg" data-go="create">＋ 创建新项目</button>
           <button class="btn btn-lg" id="btnContinue">继续已有项目 →</button>
@@ -834,26 +834,49 @@ table.dtbl td:nth-child(13){min-width:180px}
       </div>
     </div>
     <div class="caps">
-      <div class="ck">ONE WORKSPACE · SIX AI CAPABILITIES</div>
-      <h2>策划、执行、修改、复盘，一条链路完成</h2>
+      <div class="ck">六大模块 · 六个可复用能力节点</div>
+      <h2>需求 → 方案 → 建设 → 复用 → 评估，一条链路完成</h2>
+
+      <div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;margin:4px 0 22px">
+        <!-- 六大生命周期模块；仅方案设计 / 成果输出两处人工卡点 -->
+        <div style="flex:1;min-width:96px;background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:var(--r-s);padding:9px 10px">
+          <div style="font-size:10.5px;color:var(--subtle)">01</div><b style="font-size:12px;color:var(--blue-ink)">场景发现</b>
+          <p style="margin:2px 0 0;font-size:10.5px;color:var(--muted)">需求线索收口</p></div>
+        <div style="flex:1;min-width:96px;background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:var(--r-s);padding:9px 10px">
+          <div style="font-size:10.5px;color:var(--subtle)">02</div><b style="font-size:12px;color:var(--blue-ink)">需求分析</b>
+          <p style="margin:2px 0 0;font-size:10.5px;color:var(--muted)">结构化 + 价值判断</p></div>
+        <div style="flex:1;min-width:96px;background:var(--amber-soft);border:1px solid var(--amber-line);border-radius:var(--r-s);padding:9px 10px">
+          <div style="font-size:10.5px;color:var(--amber-ink)">03 · 人工卡点</div><b style="font-size:12px;color:var(--amber-ink)">方案设计</b>
+          <p style="margin:2px 0 0;font-size:10.5px;color:var(--muted)">方案 + 资源规划</p></div>
+        <div style="flex:1;min-width:96px;background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:var(--r-s);padding:9px 10px">
+          <div style="font-size:10.5px;color:var(--subtle)">04</div><b style="font-size:12px;color:var(--blue-ink)">应用建设</b>
+          <p style="margin:2px 0 0;font-size:10.5px;color:var(--muted)">结构化成果输出</p></div>
+        <div style="flex:1;min-width:96px;background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:var(--r-s);padding:9px 10px">
+          <div style="font-size:10.5px;color:var(--subtle)">05</div><b style="font-size:12px;color:var(--blue-ink)">推广复用</b>
+          <p style="margin:2px 0 0;font-size:10.5px;color:var(--muted)">模板入库 + 回流</p></div>
+        <div style="flex:1;min-width:96px;background:var(--amber-soft);border:1px solid var(--amber-line);border-radius:var(--r-s);padding:9px 10px">
+          <div style="font-size:10.5px;color:var(--amber-ink)">06 · 人工卡点</div><b style="font-size:12px;color:var(--amber-ink)">效果评估</b>
+          <p style="margin:2px 0 0;font-size:10.5px;color:var(--muted)">四维评测 + 报告</p></div>
+      </div>
+
       <div class="cap-grid">
         <div class="cap" data-go="a1"><div class="cc">A1</div><div>
-          <b>SOP 大纲生成</b><p>识别活动结构，检索历史经验，形成阶段大纲</p>
+          <b>SOP 大纲生成</b><p>需求分析 · 方案设计：识别场景结构，检索历史经验，形成阶段大纲</p>
           <div class="cf">Workflow</div></div></div>
         <div class="cap" data-go="a2"><div class="cc">A2</div><div>
-          <b>执行主表生成</b><p>把正式大纲拆成任务、负责人、时间和交付物</p>
+          <b>执行主表生成</b><p>方案设计 · 资源规划：把正式大纲拆成任务、负责人、时间和交付物</p>
           <div class="cf">Workflow</div></div></div>
         <div class="cap" data-go="a3"><div class="cc">A3</div><div>
-          <b>配套成果生成</b><p>按需生成预算、分工、物料、通知等成果</p>
+          <b>配套成果生成</b><p>应用建设 · 成果输出：按需生成预算、分工、物料、通知等结构化成果</p>
           <div class="cf">Workflow</div></div></div>
         <div class="cap" data-go="a4"><div class="cc">A4</div><div>
-          <b>AI 修改助手</b><p>先分析影响，再联动修改相关成果草稿</p>
+          <b>AI 修改助手</b><p>横切能力：先分析影响，再联动修改相关成果草稿</p>
           <div class="cf">Chatflow</div></div></div>
         <div class="cap" data-go="r1"><div class="cc">R1</div><div>
-          <b>活动复盘分析</b><p>校验数据口径，区分事实、推断与待确认项</p>
+          <b>活动复盘分析</b><p>效果评估：校验数据口径，区分事实、推断与待确认项</p>
           <div class="cf">Workflow</div></div></div>
         <div class="cap" data-go="r2"><div class="cc">R2</div><div>
-          <b>复盘报告生成</b><p>基于人工确认结论输出正式报告与行动计划</p>
+          <b>复盘报告生成</b><p>效果评估 · 推广复用：基于人工确认结论输出报告，修改沉淀回知识库</p>
           <div class="cf">Workflow</div></div></div>
       </div>
     </div>
@@ -955,6 +978,11 @@ table.dtbl td:nth-child(13){min-width:180px}
           <input id="cfgBaseUrl" class="mono" placeholder="例如：https://dify.yourcompany.com/v1" />
           <div class="hint">填写公司 Dify 实例的 API 地址，通常以 /v1 结尾。如果遇到跨域问题，需在 Dify 端配置 CORS 或通过 Nginx 代理。</div>
         </label>
+        <label class="fld" style="margin-top:8px">
+          <span>管理令牌 <span style="color:var(--subtle);font-weight:400">(可选)</span></span>
+          <input id="cfgAdminToken" class="mono" type="password" placeholder="仅当后端设置了 ADMIN_TOKEN 时需要填写" />
+          <div class="hint">后端未设置 ADMIN_TOKEN 时留空即可。填写后会随写接口与 Dify 调用发送（<code>X-Admin-Token</code> 头），仅存本机浏览器。</div>
+        </label>
         <div style="margin-top:8px">
           <div class="api-row" style="border-bottom:1px solid var(--line);padding-bottom:8px;font-weight:700;font-size:11.5px;color:var(--muted)">
             <span>编号</span><span>API Key（每个 Dify 应用独立的密钥）</span><span>应用类型</span><span>状态</span>
@@ -986,7 +1014,7 @@ table.dtbl td:nth-child(13){min-width:180px}
         </div>
         <div style="display:flex;gap:9px;margin-top:16px">
           <button class="btn btn-primary" id="btnSaveConfig">保存配置</button>
-          <span style="font-size:11.5px;color:var(--subtle);line-height:35px">配置保存在浏览器本地，不会上传到任何服务器</span>
+          <span style="font-size:11.5px;color:var(--subtle);line-height:35px">Dify 配置保存到后端；管理令牌仅存本机浏览器</span>
         </div>
       </div>
     </div>
@@ -1337,6 +1365,30 @@ function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');
 var _savedApi = localStorage.getItem('sop_api_base');
 var API_BASE = _savedApi || window.location.origin;
 
+/* ==================== 管理令牌注入 ====================
+   后端配置了 ADMIN_TOKEN 时，写接口 / Dify 代理需要认证。
+   在此包一层 fetch，对本平台 API 请求自动带上 X-Admin-Token。 */
+var ADMIN_TOKEN = localStorage.getItem('sop_admin_token') || '';
+function setAdminToken(t){
+  ADMIN_TOKEN=(t||'').trim();
+  if(ADMIN_TOKEN)localStorage.setItem('sop_admin_token',ADMIN_TOKEN);
+  else localStorage.removeItem('sop_admin_token');
+}
+(function(nativeFetch){
+  window.fetch=function(input,init){
+    try{
+      var url=(typeof input==='string')?input:(input&&input.url)||'';
+      if(ADMIN_TOKEN && (url.indexOf(API_BASE+'/api/')===0 || url.indexOf('/api/')===0)){
+        init=init||{};
+        var h=new Headers(init.headers||{});
+        h.set('X-Admin-Token',ADMIN_TOKEN);
+        init.headers=h;
+      }
+    }catch(e){}
+    return nativeFetch(input,init);
+  };
+})(window.fetch.bind(window));
+
 /* 自动检测后端是否可达 */
 setTimeout(async function(){
   try{
@@ -1362,12 +1414,12 @@ var CONFIG={
 
 async function loadConfig(){
   try{
-    var res=await fetch(API_BASE+'/api/config');
+    var res=await fetch(API_BASE+'/api/config?reveal=1');
     if(res.ok){
       var data=await res.json();
       CONFIG.baseUrl=data.base_url||'';
       CONFIG.keys={A1:'',A2:'',A3:'',A4:'',R1:'',R2:''};
-      if(data.keys){for(var k in data.keys){if(data.keys[k]&&data.keys[k].raw)CONFIG.keys[k]=data.keys[k].raw}}
+      if(data.keys){for(var k in data.keys){var it=data.keys[k];if(it)CONFIG.keys[k]=it.raw||it.masked||''}}
     }
   }catch(e){
     try{var s=localStorage.getItem('sop_config');if(s){var c=JSON.parse(s);
@@ -1375,12 +1427,14 @@ async function loadConfig(){
     }}catch(e2){}
   }
   $('#cfgBaseUrl').value=CONFIG.baseUrl;
+  var tokInput=$('#cfgAdminToken');if(tokInput)tokInput.value=ADMIN_TOKEN;
   ['A1','A2','A3','A4','R1','R2'].forEach(function(k){$('#cfgKey'+k).value=CONFIG.keys[k]||''});
   updateRegStatus();
 }
 
 async function saveConfig(){
   CONFIG.baseUrl=$('#cfgBaseUrl').value.trim().replace(/\/+$/,'');
+  var tokInput=$('#cfgAdminToken');if(tokInput)setAdminToken(tokInput.value);
   ['A1','A2','A3','A4','R1','R2'].forEach(function(k){CONFIG.keys[k]=$('#cfgKey'+k).value.trim()});
   try{
     var res=await fetch(API_BASE+'/api/config',{method:'PUT',headers:{'Content-Type':'application/json'},
