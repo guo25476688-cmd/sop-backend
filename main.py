@@ -18,6 +18,7 @@ from flask import (Flask, request, jsonify, send_file, Response, g,
                    has_app_context, stream_with_context)
 from werkzeug.exceptions import HTTPException
 
+import demo_fixtures
 from config import Config
 from database import (get_db as _new_connection, init_db, add_log, add_dify_call,
                       encrypt_secret, decrypt_secret)
@@ -29,6 +30,7 @@ logging.basicConfig(level=logging.INFO,
 
 app = Flask(__name__, static_folder="static", static_url_path="/static")
 app.config["MAX_CONTENT_LENGTH"] = Config.MAX_CONTENT_LENGTH
+app.json.ensure_ascii = False  # 错误信息里的中文不转义，便于前端展示
 
 FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 
@@ -133,6 +135,14 @@ def mask_key(key: str) -> str:
     return (key[:8] + "****" + key[-4:]) if len(key) > 12 else "****"
 
 
+def _demo_log(call_type, app_id, snapshot, project_id):
+    try:
+        add_dify_call(get_db(), app_id, call_type, snapshot, "[demo]", 0,
+                      "success", "", project_id)
+    except Exception:  # pragma: no cover
+        pass
+
+
 def row_to_dict(row):
     if row is None:
         return None
@@ -196,6 +206,7 @@ def get_config():
     result = {
         "base_url": base_url,
         "base_url_source": "env" if Config.DIFY_BASE_URL else "db",
+        "demo_mode": Config.DEMO_MODE,
         "keys": {},
     }
     for app_id, col in APP_KEY_MAP.items():
@@ -454,11 +465,15 @@ def proxy_workflow(app_id):
         return jsonify({"error": f"无效的应用编号: {app_id}"}), 400
 
     base_url, key, _ = resolve_dify(app_id)
+    data = request.get_json(force=True, silent=True) or {}
+    inputs_snapshot = json.dumps(data.get("inputs", {}), ensure_ascii=False)[:2000]
+
+    if not key and Config.DEMO_MODE:
+        _demo_log("workflow", app_id, inputs_snapshot, data.get("project_id"))
+        return jsonify(demo_fixtures.workflow_result(app_id))
     if not base_url or not key:
         return jsonify({"error": f"请先配置 {app_id} 的 API 连接信息"}), 400
 
-    data = request.get_json(force=True, silent=True) or {}
-    inputs_snapshot = json.dumps(data.get("inputs", {}), ensure_ascii=False)[:2000]
     db = get_db()
     t0 = time.time()
     try:
@@ -491,12 +506,13 @@ def proxy_workflow_stream(app_id):
         return jsonify({"error": f"无效的应用编号: {app_id}"}), 400
 
     base_url, key, _ = resolve_dify(app_id)
-    if not base_url or not key:
-        return jsonify({"error": f"请先配置 {app_id} 的 API 连接信息"}), 400
-
     data = request.get_json(force=True, silent=True) or {}
     inputs_snapshot = json.dumps(data.get("inputs", {}), ensure_ascii=False)[:2000]
     project_id = data.get("project_id")
+    demo = (not key) and Config.DEMO_MODE
+
+    if not demo and (not base_url or not key):
+        return jsonify({"error": f"请先配置 {app_id} 的 API 连接信息"}), 400
 
     def _record(status, output, err, duration):
         conn = _new_connection()
@@ -508,6 +524,11 @@ def proxy_workflow_stream(app_id):
 
     def generate():
         t0 = time.time()
+        if demo:
+            for line in demo_fixtures.workflow_sse(app_id):
+                yield f"data: {line}\n\n"
+            _record("success", "[demo]", "", int((time.time() - t0) * 1000))
+            return
         try:
             with httpx.Client(timeout=Config.DIFY_TIMEOUT, verify=Config.DIFY_VERIFY_SSL) as client:
                 with client.stream(
@@ -539,11 +560,15 @@ def proxy_chat(app_id):
         return jsonify({"error": f"无效的应用编号: {app_id}"}), 400
 
     base_url, key, _ = resolve_dify(app_id)
+    data = request.get_json(force=True, silent=True) or {}
+    query_snapshot = json.dumps({"query": data.get("query", "")}, ensure_ascii=False)[:2000]
+
+    if not key and Config.DEMO_MODE:
+        _demo_log("chat", app_id, query_snapshot, data.get("project_id"))
+        return jsonify(demo_fixtures.chat_result())
     if not base_url or not key:
         return jsonify({"error": f"请先配置 {app_id} 的 API 连接信息"}), 400
 
-    data = request.get_json(force=True, silent=True) or {}
-    query_snapshot = json.dumps({"query": data.get("query", "")}, ensure_ascii=False)[:2000]
     body = {
         "query": data.get("query", ""),
         "inputs": data.get("inputs", {}),
@@ -584,12 +609,14 @@ def proxy_chat_stream(app_id):
         return jsonify({"error": f"无效的应用编号: {app_id}"}), 400
 
     base_url, key, _ = resolve_dify(app_id)
-    if not base_url or not key:
-        return jsonify({"error": f"请先配置 {app_id} 的 API 连接信息"}), 400
-
     data = request.get_json(force=True, silent=True) or {}
     query_snapshot = json.dumps({"query": data.get("query", "")}, ensure_ascii=False)[:2000]
     project_id = data.get("project_id")
+    demo = (not key) and Config.DEMO_MODE
+
+    if not demo and (not base_url or not key):
+        return jsonify({"error": f"请先配置 {app_id} 的 API 连接信息"}), 400
+
     body = {
         "query": data.get("query", ""),
         "inputs": data.get("inputs", {}),
@@ -609,6 +636,11 @@ def proxy_chat_stream(app_id):
 
     def generate():
         t0 = time.time()
+        if demo:
+            for line in demo_fixtures.chat_sse():
+                yield f"data: {line}\n\n"
+            _record("success", "[demo]", "", int((time.time() - t0) * 1000))
+            return
         try:
             with httpx.Client(timeout=Config.DIFY_TIMEOUT, verify=Config.DIFY_VERIFY_SSL) as client:
                 with client.stream(

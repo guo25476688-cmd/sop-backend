@@ -109,6 +109,53 @@ def test_dify_proxy_bad_app_id(client):
     assert client.post("/api/dify/workflow/ZZ", json={"inputs": {}}).status_code == 400
 
 
+def test_demo_mode_workflow(client, app_module, monkeypatch):
+    monkeypatch.setattr(app_module.Config, "DEMO_MODE", True)
+    assert client.get("/api/config").get_json()["demo_mode"] is True
+
+    r = client.post("/api/dify/workflow/A1", json={"inputs": {"activity_name": "x"}})
+    assert r.status_code == 200
+    body = r.get_json()
+    assert body["demo"] is True
+    assert body["data"]["outputs"]["text"] == body["outputs"]["text"]
+    assert "SOP 大纲" in body["outputs"]["text"]
+
+    # A2 演示内容应为可解析的任务数组
+    import json as _json
+    a2 = client.post("/api/dify/workflow/A2", json={"inputs": {}}).get_json()
+    assert isinstance(_json.loads(a2["outputs"]["text"]), list)
+
+    # 调用被记入 dify_calls
+    calls = client.get("/api/dify-calls").get_json()
+    assert calls["total"] >= 2
+
+
+def test_demo_mode_workflow_stream(client, app_module, monkeypatch):
+    monkeypatch.setattr(app_module.Config, "DEMO_MODE", True)
+    r = client.post("/api/dify/workflow-stream/A1", json={"inputs": {}})
+    assert r.status_code == 200
+    text = r.get_data(as_text=True)
+    assert "workflow_finished" in text
+    assert "SOP 大纲" in text
+
+
+def test_demo_mode_chat(client, app_module, monkeypatch):
+    monkeypatch.setattr(app_module.Config, "DEMO_MODE", True)
+    r = client.post("/api/dify/chat/A4", json={"query": "把跟踪周期改成三周"})
+    assert r.status_code == 200
+    assert r.get_json()["demo"] is True
+    assert r.get_json()["answer"].strip()
+
+
+def test_demo_mode_yields_to_real_key(client, app_module, monkeypatch):
+    monkeypatch.setattr(app_module.Config, "DEMO_MODE", True)
+    client.put("/api/config", json={"base_url": "https://dify.example/v1",
+                                    "key_a1": "app-real-key-000000"})
+    # 配了真实 key + base_url，就不再走演示分支（会尝试真实调用 → 502）
+    r = client.post("/api/dify/workflow/A1", json={"inputs": {}})
+    assert r.status_code == 502
+
+
 # ──────────────────────────── 导出脱敏 ────────────────────────────
 
 def test_export_masks_secrets_by_default(client):

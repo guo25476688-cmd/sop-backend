@@ -12,7 +12,8 @@
 （业务工作台 `/` ｜ 运营管理后台 `/admin`）
 
 > Render 免费实例，闲置后会休眠，**首次打开需等 30–60 秒冷启动**，属正常现象。
-> 演示环境未接真实 Dify Key，AI 生成步骤会提示"请先配置"——这一步的实现见 [main.py](main.py) 的 Dify 代理层与 [docs/03](docs/03-orchestration.md)。
+> 演示环境开启了 `DEMO_MODE`：未接真实 Dify Key 的 AI 步骤会返回**预置示例内容**（以「高管 AI 应用实战工作坊」为样例），
+> 因此可以从「新建项目」一路走到「复盘报告」看完整流程。这层降级的实现见 [main.py](main.py) 的 Dify 代理层与 [demo_fixtures.py](demo_fixtures.py)。
 
 ---
 
@@ -76,6 +77,7 @@ bash start.sh 8000
 | `ADMIN_TOKEN` | 空 | 设置后 `/admin` 与写接口需 HTTP Basic（密码=该值）；不设为开放的开发模式 |
 | `DIFY_BASE_URL` / `DIFY_KEY_A1..R2` | 空 | 提供则作为权威来源，覆盖后台 UI 配置 |
 | `DIFY_VERIFY_SSL` | `1` | 自建 Dify 用自签名证书时设 `0` |
+| `DEMO_MODE` | `0` | `1` 时未配置 Key 的应用返回 [demo_fixtures.py](demo_fixtures.py) 的预置内容 |
 
 > **开发模式**（未设 `ADMIN_TOKEN`）下所有接口开放，响应头带 `X-Auth-Warning`，启动日志打印告警。公网部署务必设置 `ADMIN_TOKEN` 与 `APP_SECRET_KEY`。
 >
@@ -191,6 +193,7 @@ pytest
 sop-backend/
 ├── main.py              # Flask 后端：前端托管 + API 配置 + 项目 CRUD + Dify 代理 + 统计日志
 ├── config.py            # 集中环境变量配置（12-Factor）
+├── demo_fixtures.py     # DEMO_MODE 下代替真实 Dify 调用的预置内容
 ├── database.py          # SQLite 建表 + API Key 透明加密
 ├── requirements.txt / requirements-dev.txt
 ├── .env.example
