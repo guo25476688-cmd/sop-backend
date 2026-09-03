@@ -4,7 +4,29 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn main:app --bind 0.0.0.0:$PORT
+    startCommand: gunicorn main:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 320
+    healthCheckPath: /healthz
     envVars:
       - key: FLASK_DEBUG
         value: "0"
+      # 以下变量在 Render 控制台按需填写（sync: false 表示不写入仓库）
+      - key: APP_SECRET_KEY   # Fernet 密钥，加密数据库中的 API Key
+        sync: false
+      - key: ADMIN_TOKEN      # 管理面 / 写接口的 HTTP Basic 密码
+        sync: false
+      - key: DIFY_BASE_URL
+        sync: false
+      - key: DIFY_VERIFY_SSL
+        value: "1"
+      - key: DIFY_KEY_A1
+        sync: false
+      - key: DIFY_KEY_A2
+        sync: false
+      - key: DIFY_KEY_A3
+        sync: false
+      - key: DIFY_KEY_A4
+        sync: false
+      - key: DIFY_KEY_R1
+        sync: false
+      - key: DIFY_KEY_R2
+        sync: false
